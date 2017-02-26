@@ -14,7 +14,6 @@ $(function() {
 	tweenTime = 0.7,
 	tweenTimeFast = 0.3,
 	btnArray = ['btnA0' ,'btnA1' ,'btnA2' ,'btnA3'],
-	$btnText = $('.btn-project-text'),
 	tlWindowScroll = new TimelineMax({paused: true}),
 	tlBannerSize0 = new TimelineMax({paused: true}),
 	tlBannerSize1 = new TimelineMax({paused: true}),
@@ -30,9 +29,6 @@ $(function() {
 		// prep buttons
 		btnArray[i] = $('#btnExplodeContainer'+i);
 	}
-
-//	var bannerTimeline = new TweenMax();
-//  bannerTimeline.staggerTo($projectBanners, tweenTimeFast, {height: 0}, tweenTimeFast);
 
 	$('.nav-link').click(function(e) {
 		e.preventDefault();
@@ -112,7 +108,6 @@ $(function() {
 		$('.project-subtitle').css('top', '0px');
 		$('#projectNext').addClass('btn-project-off').attr('data-next', '');
 		// handle svg button display
-		toggleText(true);
 		$btnE.each(function(index) {
 			btnArray[index].css('left', '0');
 			$('#mainBtnId'+index).attr('r', 23);
@@ -204,13 +199,6 @@ $(function() {
 	$('.btn-project-close').on('click', closeProject);
 	$('#navWork').on('click', closeProject);
 	
-	function toggleText (onOff) {
-		if (onOff) {
-			$btnText.removeClass('btn-project-off');
-		} else {
-			$btnText.addClass('btn-project-off');
-		}
-	}
 });
 
 

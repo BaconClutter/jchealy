@@ -18,7 +18,6 @@ $(function() {
 	strokeNum = 5,
 	strokeDash = '27, 120',
 	circSection = 360 / strokeNum,
-	$btnText = $('.btn-project-text'),
 	snapArray = ['sb0' ,'sb1' ,'sb2' ,'sb3'],
 	btnArray = ['btnA0' ,'btnA1' ,'btnA2' ,'btnA3'],
 	snapCloseArray = ['cb0' ,'cb1' ,'cb2' ,'cb3'],
@@ -34,14 +33,6 @@ $(function() {
 	cE, 
 	curRot,
 	closeCircle;
-
-	function toggleText (onOff) {
-		if (onOff) {
-			$btnText.removeClass('btn-project-off');
-		} else {
-			$btnText.addClass('btn-project-off');
-		}
-	}
 
 	$projectBanners.each(function(index) {
 		// Create close buttons
@@ -131,7 +122,7 @@ $(function() {
 		
 		var tl1 = new TimelineMax({paused: true});
 			tl1.to(mE, duration1, {css:{strokeWidth: 10}, ease:Back.easeOut.config(5)}, start);
-			tl1.to(mE, duration1, {attr:{r: 0}, css:{strokeWidth: 0}, ease:Back.easeIn.config(3), onComplete: toggleText, onCompleteParams: false}, 'clickSection');
+			tl1.to(mE, duration1, {attr:{r: 0}, css:{strokeWidth: 0}, ease:Back.easeIn.config(3)}, 'clickSection');
 			tl1.addPause(start);
 			tl1.addPause('clickSection');
 
