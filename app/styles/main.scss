@@ -40,7 +40,10 @@ CSS Style Conventions: http://smacss.com/book/categorizing http://thesassway.com
 /*	----------------- 
 		BASE 
 ----------------- */
-@import url(http://fonts.googleapis.com/css?family=Muli:400,300,300italic,400italic);
+//@import url(http://fonts.googleapis.com/css?family=Muli:400,300,300italic,400italic);
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700);
+
 $icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 // bower:scss
 @import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
@@ -84,7 +87,7 @@ $buttonShadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
 
 $buttonShadowActive: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
 
-$mainFont: 'Muli', 'Century Gothic', Verdana, Arial, san-serif;
+$mainFont: 'Montserrat', 'Century Gothic', Verdana, Arial, san-serif;
 
 $z1: 100;
 $z2: 200;
@@ -506,8 +509,6 @@ img.about-headshot {
 .project-hillrom { background-image: url(../images/banner-mobile-hillrom.jpg); }
 
 .project-ssa { background-image: url(../images/banner-mobile-ssa.jpg); }
-
-//.project-mfs { background-image: url(../images/banner-mobile-mfs.jpg); }
 
 .project-artistprofile { background-image: url(../images/banner-mobile-artistprofile.jpg); }
 

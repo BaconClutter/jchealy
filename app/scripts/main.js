@@ -15,11 +15,12 @@ $(function() {
 	tweenTimeFast = 0.3,
 	btnArray = ['btnA0' ,'btnA1' ,'btnA2' ,'btnA3'],
 	tlWindowScroll = new TimelineMax({paused: true}),
-	tlBannerSize0 = new TimelineMax({paused: true}),
-	tlBannerSize1 = new TimelineMax({paused: true}),
-	tlBannerSize2 = new TimelineMax({paused: true}),
-	tlBannerSize3 = new TimelineMax({paused: true}),
-	tlBannerSizeArr = [tlBannerSize0, tlBannerSize1, tlBannerSize2, tlBannerSize3],
+	tlBannerSizeArr = [
+		new TimelineMax({paused: true}), 
+		new TimelineMax({paused: true}), 
+		new TimelineMax({paused: true}), 
+		new TimelineMax({paused: true})
+	],
 	projBannerArr = [];
 	
 	// prepare project banner array and load animations 
@@ -38,13 +39,14 @@ $(function() {
 	});
 
 	function loadProject (e) {
-		var clickedId = $(e.target).attr('id') === 'projectNext' ? $(e.target).attr('data-next') : $(e.target).parents('.project-banner').attr('id'),
+		var clickedId = $(e.target).parents('.project-banner').attr('id'),
 		svgId = $('#' + clickedId).find('.btn-project-explode').attr('id'),
-		$svgContainer = $('#' + svgId),
-		allIds = toggleProjectBanners(clickedId);
+		$svgContainer = $('#' + svgId);
+
+		toggleProjectBanners(clickedId);
 
 		$svgContainer.trigger('dope-click');
-		prepNext(allIds, allIds.indexOf(clickedId));
+		prepNext(projBannerArr, projBannerArr.indexOf(clickedId));
 
 		$('.project-return').empty();
 		// ajax in project section using naming convention that matches clicked element > file > div
@@ -54,39 +56,24 @@ $(function() {
 	}
 	
 	function toggleProjectBanners (openId) {
-		var availableProjectIds = [];
 		for (var i = 0; i < $projectBanners.length; i++) {
-			availableProjectIds.push($projectBanners.eq(i).attr('id'));
 			if ($projectBanners.eq(i).attr('id') !== openId) {	
 				tlBannerSizeArr[i].tweenFromTo('start','expand');
 				$projectBanners.eq(i).trigger('sticky_kit:detach');
 			}
 		}
-		return availableProjectIds;
 	}
 	
 	function prepNext (idList, curIdIndex) {
-		var $btnNext = $('#projectNext'),
-				$btnClose = $('#' + idList[curIdIndex] + 'Close');
-		$btnNext.removeClass('btn-project-off');
+		var	$btnClose = $('#' + idList[curIdIndex] + 'Close');
 		$btnClose.removeClass('btn-project-off').attr('data-close', idList[curIdIndex]);
 		$('#navWork').attr('data-close', idList[curIdIndex]);
-		// set data close attribute on close button to jump back to that project when closed
-		if ( (curIdIndex + 1) === idList.length) {
-			$btnNext.attr('data-next', idList[0]);
-		} else {
-			$btnNext.attr('data-next', idList[ (curIdIndex + 1 )]);
-		}
 	}
 	
-	function nextProject (e) {
-		loadProject(e);
-	}
-		
+
 	function closeProject (e) {
 		// manage the buttons and remove data element from next button
 		var $cP = $('#'+ $(e.target).closest('.btn-project-close').attr('data-close'));
-		//	var cpOffset = $cP.offset().top;
 		$cP.trigger('sticky_kit:detach');
 		$squishyEl = '';
 		
@@ -106,7 +93,6 @@ $(function() {
 		}
 		$('.project-title').css('top', '0px');
 		$('.project-subtitle').css('top', '0px');
-		$('#projectNext').addClass('btn-project-off').attr('data-next', '');
 		// handle svg button display
 		$btnE.each(function(index) {
 			btnArray[index].css('left', '0');
@@ -195,7 +181,6 @@ $(function() {
 		 ---------------- */
 
  	$('.btn-project-explode').on('click', loadProject);
-	$('.btn-project-next').on('click', nextProject);
 	$('.btn-project-close').on('click', closeProject);
 	$('#navWork').on('click', closeProject);
 	

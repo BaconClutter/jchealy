@@ -3,16 +3,13 @@
 
 'use strict';
 
-	/* ---------------------------------------
-	// begin mega loop for each exploder button
-		--------------------------------------- */
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 $(function() {
 
-	var $projectBanners = $('.project-banner'),
+	var $exploderButtons = $('.btn-project-explode'),
 	jitMin = 25,
 	jitMax = 85,
 	strokeNum = 5,
@@ -34,7 +31,10 @@ $(function() {
 	curRot,
 	closeCircle;
 
-	$projectBanners.each(function(index) {
+	/* ---------------------------------------
+	// begin mega loop for each exploder button
+	--------------------------------------- */
+	$exploderButtons.each(function(index) {
 		// Create close buttons
 		snapCloseArray[index] = Snap('#btnClose'+index);
 		btnCloseArray[index] = $('#btnCloseContainer'+index);
