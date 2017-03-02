@@ -40,7 +40,6 @@ CSS Style Conventions: http://smacss.com/book/categorizing http://thesassway.com
 /*	----------------- 
 		BASE 
 ----------------- */
-//@import url(http://fonts.googleapis.com/css?family=Muli:400,300,300italic,400italic);
 
 @import url(https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700);
 
@@ -730,8 +729,9 @@ img.about-headshot {
 .project-expanded-text-only {
 	padding-top: 0px;
 	padding-bottom: 25px;
-	font-size: 16px;
 	line-height: 160%;
+	font-size: 16px;
+	font-weight: 300;
 }
 
 /* --------------------

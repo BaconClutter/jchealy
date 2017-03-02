@@ -15,10 +15,10 @@ $(function() {
 	strokeNum = 5,
 	strokeDash = '27, 120',
 	circSection = 360 / strokeNum,
-	snapArray = ['sb0' ,'sb1' ,'sb2' ,'sb3'],
-	btnArray = ['btnA0' ,'btnA1' ,'btnA2' ,'btnA3'],
-	snapCloseArray = ['cb0' ,'cb1' ,'cb2' ,'cb3'],
-	btnCloseArray = ['btnCA0' ,'btnCA1' ,'btnCA2' ,'btnCA3'],
+	snapArray = [],
+	snapCloseArray = [],
+	btnCloseArray = [],
+	btnArr = [],
 	cX = 50,
 	cY = cX,
 	r = 23,
@@ -53,7 +53,7 @@ $(function() {
 		});
 
 		snapArray[index] = Snap('#btnExplode'+index); 
-		btnArray[index] = $('#btnExplodeContainer'+index);
+		btnArr[index] = $('#btnExplodeContainer'+index);
 		snapArray[index].attr({
 			height: 100,
 			width: 100,
@@ -128,7 +128,7 @@ $(function() {
 
 		function animateBtnSVG () {
 			// make your circle array and animate the part that can't be staggered to
-			btnArray[index].one('mouseleave', animateBtnSVGReverse);
+			btnArr[index].one('mouseleave', animateBtnSVGReverse);
 			for (var j = strokeNum; j > 0; j--) {
 				curId = 'btnId'+j+index; // select id iteratively
 				cE = document.getElementById(curId); // select each circle the old fashioned way
@@ -143,7 +143,7 @@ $(function() {
 		}
 
 		function animateBtnSVGReverse () {
-			btnArray[index].one('mouseenter', animateBtnSVG);
+			btnArr[index].one('mouseenter', animateBtnSVG);
 			// make your circle array and animate the part that can't be staggered to
 			for (var j = strokeNum; j > 0; j--) {
 				curId = 'btnId'+j+index; // select id iteratively
@@ -155,10 +155,10 @@ $(function() {
 		}
 
 		function animateBtnSVGClick () {
-			btnArray[index].off('mouseleave');
-			btnArray[index].one('mouseenter', animateBtnSVG);
+			btnArr[index].off('mouseleave');
+			btnArr[index].one('mouseenter', animateBtnSVG);
 			function hideBtn () {
-				btnArray[index].css('left', '-9999px');
+				btnArr[index].css('left', '-9999px');
 			}
 			for (var j = strokeNum; j > 0; j--) {
 				curId = 'btnId'+j+index; // select id iteratively
@@ -171,7 +171,7 @@ $(function() {
 		/* -------------
 	   EVENT HANDLERS
 		 ------------- */
-		btnArray[index].on('click dope-click', animateBtnSVGClick);
-		btnArray[index].one('mouseenter', animateBtnSVG);
+		btnArr[index].on('click dope-click', animateBtnSVGClick);
+		btnArr[index].one('mouseenter', animateBtnSVG);
 	});
 });
