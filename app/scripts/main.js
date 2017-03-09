@@ -25,14 +25,22 @@ $(function() {
 	initialHeight = 0,
 	lastScrollTop = 0,
 	newHeight = 0,
+	expandHeight = 406,
+	expandHeightMobile = 250,
 	$squishyEl = '',
-	divOffsetMobile = $('#Work').offset().top + 350,
-	divOffset = divOffsetMobile + 100;
+	divOffsetMobile = $('#Work').offset().top + 200,
+	divOffset = divOffsetMobile + 300,
+	$btnProjClose = $('.btn-project-close'),
+	$btnProjExplode = $('.btn-project-explode'),
+	$projTitle = $('.project-title'),
+	$projSubTitle = $('.project-subtitle'),
+	$projReturn = $('.project-return'),
+	scrollReady = false;
 	
 	// prepare project banner array and load animations 
 	for (var i = 0; i < $projectBanners.length; i++) {
 		projBannerArr.push($projectBanners.eq(i).attr('id'));
-		tlBannerSizeArr[i].to($projectBanners.eq(i), 0.001, {height: 0}, 'start').to($projectBanners.eq(i), 0.001, {height: 406}, 'expand');
+		tlBannerSizeArr[i].to($projectBanners.eq(i), 0.001, {height: 0}, 'start').to($projectBanners.eq(i), 0.001, {height: expandHeight}, 'expand');
 		// prep buttons
 		btnArr[i] = $('#btnExplodeContainer'+i);
 	}
@@ -42,17 +50,17 @@ $(function() {
 		svgId = $('#' + clickedId).find('.btn-project-explode').attr('id'),
 		$svgContainer = $('#' + svgId);
 
-		
-
 		$svgContainer.trigger('dope-click');
 		prepNext(clickedId);
 
-		$('.project-return').empty();
-		// ajax in project section using naming convention that matches clicked element > file > div
-		$('#' + clickedId + 'Return').load(clickedId + '.html #' + clickedId + 'Inner', function() {
-			toggleProjectBanners(clickedId);
-			jump(clickedId, false);
-		});
+		setTimeout (function () {
+			$('.project-return').empty();
+			// ajax in project section using naming convention that matches clicked element > file > div
+			$('#' + clickedId + 'Return').load(clickedId + '.html #' + clickedId + 'Inner', function() {
+				toggleProjectBanners(clickedId);
+				jump(clickedId, false);
+			});
+		}, 500);
 	}
 	
 	function toggleProjectBanners (openId) {
@@ -75,28 +83,31 @@ $(function() {
 		var $cP = $('#'+ $(e.target).closest('.btn-project-close').attr('data-close'));
 		$cP.trigger('sticky_kit:detach');
 		$squishyEl = '';
-		
-		$('.btn-project-close').addClass('btn-project-off');
-		$('.btn-project-explode').removeClass('btn-project-off');
+
+		$btnProjClose.addClass('btn-project-off');
+		$btnProjExplode.removeClass('btn-project-off');
 
 		// display all banners and more buttons again
 		var uClosedTho = jump($cP.attr('id'), true);
 
 		if (uClosedTho === 'yup') {
 			// clear all project return divs
-			TweenLite.to(window, 0, {scrollTo:{y: 2000, autokill: false, immediateRender: false}});
-			$('.project-return').empty();
-			TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: 406}, tweenTimeFast);
+			TweenLite.to(window, 0, {scrollTo:{y: 2100, autokill: false, immediateRender: false}});
+			$projReturn.empty();
+			if (document.documentElement.clientWidth > 480) {
+				TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandHeight}, tweenTimeFast);
+			} else {
+				TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandHeightMobile}, tweenTimeFast);
+			}
 		}
-		$('.project-title').css('top', '0px');
-		$('.project-subtitle').css('top', '0px');
+		$projTitle.css('top', '0px');
+		$projSubTitle.css('top', '0px');
+
 		// handle svg button display
-		
 		$btnE.each(function(index) {
 			btnArr[index].css('left', '0');
 			$('#mainBtnId'+index).attr('r', 23);
 		});
-		
 	}
 	
 	
@@ -104,24 +115,35 @@ $(function() {
 		var	curId = h,
 				$projEl = $('#'+curId);
 		if (document.documentElement.clientWidth > 480) {
-			// set vars for scroll sizing detection
+			// desktop size
 			if (!c) {
 				TweenMax.to($projEl, tweenTimeFast, {height: 300, onComplete: function () {
 					initialHeight = 0;
 					lastScrollTop = 0;
 					newHeight = 0;
 					$squishyEl = $projEl;
-					$squishyEl.stick_in_parent({recalc_every: 100});
+					$squishyEl.stick_in_parent({recalc_every: 100}); // stick for desktop
 				}});
-				TweenMax.to($('.project-return'), 0.01, {css:{height: '100%'}});	
+				$projReturn.height('100%');
 				TweenLite.to(window, 0, {scrollTo:{y: divOffset, autokill: false, immediateRender: false}});
 			}
 		} else {
-			$('.project-return').height('100%');
+			// mobile size
+			// we are not sticking in mobile
+			$projReturn.height('100%');
 			initialHeight = 0;
 			$squishyEl = $projEl;
-			TweenLite.to(window, tweenTime, {scrollTo:{y: divOffsetMobile, autokill: false}});
+
+			//just set the height on mobile
+			$squishyEl.height(100);
+			var title = title || $squishyEl.find('.project-title');
+			var subTitle = subTitle || $squishyEl.find('.project-subtitle');
+			title.css('top', '45px');
+			subTitle.css('top', '45px');
+
+			TweenLite.to(window, 0, {scrollTo:{y: divOffsetMobile, autokill: false, immediateRender: false}});
 		}
+		scrollReady = !scrollReady;
 		if (c) { return 'yup'; }
 	}
 	
@@ -135,38 +157,45 @@ $(function() {
 	 * actually adjusting the height of the banner
 	 * background-attachment perhaps
 	*/
+	
+		$(window).scroll(function() { 		// make this better
+			if (scrollReady) {
+				if ($squishyEl !== '') {
+					var curH = $(this).scrollTop();
+					var title = title || $squishyEl.find('.project-title');
+					var subTitle = subTitle || $squishyEl.find('.project-subtitle');
+					if (initialHeight === 0) {
+						initialHeight = curH;
+					}
+					var diff = (curH - initialHeight) / 3;
 
-	$(window).scroll(function() { 		// make this better
-		if ($squishyEl !== '') {
-			var curH = $(this).scrollTop();
-			var title = title || $squishyEl.find('.project-title');
-			var subTitle = subTitle || $squishyEl.find('.project-subtitle');
-			if (initialHeight === 0) {
-				initialHeight = curH;
-			}
-			var diff = (curH - initialHeight) / 3;
-			if(curH > lastScrollTop) {
-				if ($squishyEl.height() > 100 && $squishyEl.height() < 301) {
-					newHeight = Math.max(100, ($squishyEl.height() - diff));
-					if (newHeight < 301) {
-						$squishyEl.height(newHeight);
-						title.css('top', '45px');
-						subTitle.css('top', '45px');
+					if (curH > lastScrollTop) {  // Going Down
+			
+						if ($squishyEl.height() > 100 && $squishyEl.height() < 301) {
+							newHeight = Math.max(100, ($squishyEl.height() - diff));
+							if (newHeight < 301) {
+								$squishyEl.height(newHeight);
+								title.css('top', '45px');
+								subTitle.css('top', '45px');
+							}
+						}
+
+					} else {  // Going Up
+						
+						if ($squishyEl.height() < 300 && curH < initialHeight) {
+							newHeight = Math.min(300, ($squishyEl.height() + ( diff * -1)));
+							if (newHeight > 100) {
+								$squishyEl.height(newHeight);
+								title.css('top', '0px');
+								subTitle.css('top', '0px');
+							}
+						}
+
 					}
-				}
-			} else {
-				if ($squishyEl.height() < 300 && curH < initialHeight) {
-					newHeight = Math.min(300, ($squishyEl.height() + ( diff * -1)));
-					if (newHeight > 100) {
-						$squishyEl.height(newHeight);
-						title.css('top', '0px');
-						subTitle.css('top', '0px');
-					}
+					lastScrollTop = curH;
 				}
 			}
-			lastScrollTop = curH;
-		}
-	});
+		});
 
 	/* ----------------
 		 /WINDOW SCROLLING
