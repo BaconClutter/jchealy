@@ -14,22 +14,15 @@ $(function() {
 	tweenTime = 0.7,
 	tweenTimeFast = 0.3,
 	tlWindowScroll = new TimelineMax({paused: true}),
-	tlBannerSizeArr = [
-		new TimelineMax({paused: true}), 
-		new TimelineMax({paused: true}), 
-		new TimelineMax({paused: true}), 
-		new TimelineMax({paused: true})
-	],
 	btnArr = [],
-	projBannerArr = [],
 	initialHeight = 0,
 	lastScrollTop = 0,
 	newHeight = 0,
 	expandHeight = 406,
-	expandHeightMobile = 250,
+	expandHeightMobile = 270,
 	$squishyEl = '',
-	divOffsetMobile = $('#Work').offset().top + 200,
-	divOffset = divOffsetMobile + 300,
+	divOffsetMobile = $('#Work').offset().top + 300,
+	divOffset = divOffsetMobile + 200,
 	$btnProjClose = $('.btn-project-close'),
 	$btnProjExplode = $('.btn-project-explode'),
 	$projTitle = $('.project-title'),
@@ -39,8 +32,6 @@ $(function() {
 	
 	// prepare project banner array and load animations 
 	for (var i = 0; i < $projectBanners.length; i++) {
-		projBannerArr.push($projectBanners.eq(i).attr('id'));
-		tlBannerSizeArr[i].to($projectBanners.eq(i), 0.001, {height: 0}, 'start').to($projectBanners.eq(i), 0.001, {height: expandHeight}, 'expand');
 		// prep buttons
 		btnArr[i] = $('#btnExplodeContainer'+i);
 	}
@@ -66,7 +57,7 @@ $(function() {
 	function toggleProjectBanners (openId) {
 		for (var i = 0; i < $projectBanners.length; i++) {
 			if ($projectBanners.eq(i).attr('id') !== openId) {	
-				tlBannerSizeArr[i].tweenFromTo('start','expand');
+				$projectBanners.eq(i).height(0);
 				$projectBanners.eq(i).trigger('sticky_kit:detach');
 			}
 		}
@@ -92,11 +83,13 @@ $(function() {
 
 		if (uClosedTho === 'yup') {
 			// clear all project return divs
-			TweenLite.to(window, 0, {scrollTo:{y: 2100, autokill: false, immediateRender: false}});
+			
 			$projReturn.empty();
 			if (document.documentElement.clientWidth > 480) {
+				TweenLite.to(window, 0, {scrollTo:{y: 2100, autokill: false, immediateRender: false}});
 				TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandHeight}, tweenTimeFast);
 			} else {
+				TweenLite.to(window, 0, {scrollTo:{y: 1600, autokill: false, immediateRender: false}});
 				TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandHeightMobile}, tweenTimeFast);
 			}
 		}
@@ -135,7 +128,7 @@ $(function() {
 			$squishyEl = $projEl;
 
 			//just set the height on mobile
-			$squishyEl.height(100);
+			$squishyEl.height(170);
 			var title = title || $squishyEl.find('.project-title');
 			var subTitle = subTitle || $squishyEl.find('.project-subtitle');
 			title.css('top', '45px');
@@ -159,7 +152,7 @@ $(function() {
 	*/
 	
 		$(window).scroll(function() { 		// make this better
-			if (scrollReady) {
+			if (scrollReady && document.documentElement.clientWidth > 480) {
 				if ($squishyEl !== '') {
 					var curH = $(this).scrollTop();
 					var title = title || $squishyEl.find('.project-title');

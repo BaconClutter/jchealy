@@ -600,7 +600,10 @@ img.about-headshot {
 .btn-project-close {
 	@extend .btn-project-explode;
 	position: fixed;
-	top: -100px;
+	top: -50px;
+	@media (min-width: $screen-sm-min) {
+		top: -100px;	
+	}
 	right: 25px;
 	color: $darkBlue;
 	background-color: transparent;
