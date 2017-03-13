@@ -51,7 +51,7 @@ $(function() {
 				toggleProjectBanners(clickedId);
 				jump(clickedId, false);
 			});
-		}, 500);
+		}, 2000);
 	}
 	
 	function toggleProjectBanners (openId) {

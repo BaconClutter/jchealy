@@ -15,14 +15,18 @@ $(function() {
 	strokeNum = 5,
 	strokeDash = '27, 120',
 	circSection = 360 / strokeNum,
+	duration1 = 0.5,
+	duration2 = 3,
+	cX = 50,
+	cY = cX,
+	r = 23,
 	snapArray = [],
 	snapCloseArray = [],
 	btnCloseArray = [],
 	btnArr = [],
-	cX = 50,
-	cY = cX,
-	r = 23,
 	circArray = [], // prep vars for unique ids and looping
+	tlArray1 = [],
+	tlArray2 = [],
 	jitStroke,
 	curBtn, 
 	curId, 
@@ -98,6 +102,7 @@ $(function() {
 			'position': 'absolute'
 		};
 
+		// Make svg plus signs
 		var plusRectVert = snapArray[index].rect(48, 40, 4, 20);
 		var plusRectHorz = snapArray[index].rect(40, 48, 20, 4);
 		plusRectVert.attr(plusAttrs);
@@ -108,70 +113,91 @@ $(function() {
 		plusRectVertClose.attr(plusAttrs);
 		plusRectHorzClose.attr(plusAttrs);
 
-		var mE = document.getElementById('mainBtnId'+index); // grab the inner solid svg button circle
-
-		/* -------------
-	   ANIMATIONS
-		 ------------- */
-
-		// Pre load a tween using a timeline so they are not having to be loaded during the even.
-		var tl2 = new TimelineMax({paused: true}),
-			start = 0,
-			duration1 = 0.5,
-			duration2 = 3;
-		
-		var tl1 = new TimelineMax({paused: true});
-			tl1.to(mE, duration1, {css:{strokeWidth: 10}, ease:Back.easeOut.config(5)}, start);
-			tl1.to(mE, duration1, {attr:{r: 0}, css:{strokeWidth: 0}, ease:Back.easeIn.config(3)}, 'clickSection');
-			tl1.addPause(start);
-			tl1.addPause('clickSection');
-
-		function animateBtnSVG () {
-			// make your circle array and animate the part that can't be staggered to
-			btnArr[index].one('mouseleave', animateBtnSVGReverse);
-			for (var j = strokeNum; j > 0; j--) {
-				curId = 'btnId'+j+index; // select id iteratively
-				cE = document.getElementById(curId); // select each circle the old fashioned way
-				circArray.push(cE);
-				jitStroke = getRandomInt(jitMin, jitMax); // set a random stroke width for each loop
-				TweenMax.to(cE, duration1, {css:{strokeWidth: jitStroke}, ease: Back.easeOut.config(5), delay: (1*j) / 50});
-			}
-			tl2.staggerTo(circArray, duration2, {rotation: '+=60', ease:Sine.easeOut}, 0.02);
-			tl2.play();
-			// animate this inner button out a little bit to move with the stroked circles.
-			tl1.play(start);
-		}
-
-		function animateBtnSVGReverse () {
-			btnArr[index].one('mouseenter', animateBtnSVG);
-			// make your circle array and animate the part that can't be staggered to
-			for (var j = strokeNum; j > 0; j--) {
-				curId = 'btnId'+j+index; // select id iteratively
-				cE = document.getElementById(curId); // select each circle the old fashioned way
-				TweenMax.to(cE, duration1, {css:{strokeWidth: 0}, ease: Back.easeOut.config(5), delay: (1*j) / 50});
-			}
-			tl2.reverse();
-			tl1.reverse();
-		}
-
-		function animateBtnSVGClick () {
-			btnArr[index].off('mouseleave');
-			btnArr[index].one('mouseenter', animateBtnSVG);
-			function hideBtn () {
-				btnArr[index].css('left', '-9999px');
-			}
-			for (var j = strokeNum; j > 0; j--) {
-				curId = 'btnId'+j+index; // select id iteratively
-				cE = document.getElementById(curId); // select each circle the old fashioned way
-				TweenMax.to(cE, duration1, {css:{strokeWidth: 0}, ease: Back.easeOut.config(5), delay: (1*j) / 50, onComplete: hideBtn});
-			}
-			tl1.play('clickSection');
-		}
-
 		/* -------------
 	   EVENT HANDLERS
 		 ------------- */
-		btnArr[index].on('click dope-click', animateBtnSVGClick);
-		btnArr[index].one('mouseenter', animateBtnSVG);
-	});
+	}); // end the big each loop
+
+
+	// setup timelines for each button
+	for (var i = 0; i < btnArr.length ; i++) {
+		var mE = document.getElementById('mainBtnId'+i); // grab the inner solid svg button circle
+		var tl1 = new TimelineMax({paused: true});
+		var tl2 = new TimelineMax({paused: true});
+
+		tl1.to(mE, duration1, {css:{strokeWidth: 10}, ease:Back.easeOut.config(5)}, 0);
+		tl1.to(mE, duration1, {attr:{r: 0}, css:{strokeWidth: 0}, ease:Back.easeIn.config(3)}, 'clickSection');
+		tl1.addPause(0);
+		tl1.addPause('clickSection');
+
+		tlArray1.push(tl1);
+		tlArray2.push(tl2);
+	}
+
+	function animateBtnSVG (e) {
+		var clickedEl = e.data.el;
+		var btnIndex = clickedEl.attr('id').slice(-1);
+		// make your circle array and animate the part that can't be staggered to
+		for (var j = strokeNum; j > 0; j--) {
+			curId = 'btnId'+j+btnIndex; // select id iteratively
+			cE = document.getElementById(curId); // select each circle the old fashioned way
+			circArray.push(cE);
+			jitStroke = getRandomInt(jitMin, jitMax); // set a random stroke width for each loop
+			TweenMax.to(cE, duration1, {css:{strokeWidth: jitStroke}, ease: Back.easeOut.config(5), delay: (1*j) / 50});
+		}
+		tlArray2[btnIndex].staggerTo(circArray, duration2, {rotation: '+=60', ease:Sine.easeOut}, 0.02);
+		tlArray2[btnIndex].play();
+		// animate this inner button out a little bit to move with the stroked circles.
+		tlArray1[btnIndex].play(0);
+	}
+	
+
+	function animateBtnSVGClick (e) {
+		var clickedEl = e.data.el;
+		var btnIndex = clickedEl.attr('id').slice(-1);
+		var middleBtn = document.getElementById('mainBtnId' + btnIndex);
+		
+		function hideEl () {
+			setTimeout (function () {
+				clickedEl.css('left', '-9999px');
+				TweenMax.to(middleBtn, 0.1, {scale:1,transformOrigin:'center'});
+			}, 2000);
+		}
+
+		for (var j = strokeNum; j > 0; j--) {
+			cE = document.getElementById('btnId'+j+btnIndex);
+			circArray.push(cE);
+			TweenMax.to(cE, duration2, {css:{strokeWidth: 0}, ease: Back.easeOut.config(5), delay: (1*j) / 50});	
+		//	TweenMax.to(cE, duration2, {css:{strokeWidth: 0}, ease: Back.easeOut.config(5), delay: (1*j) / 50, onComplete: hideEl });	
+		}
+
+		TweenMax.to(middleBtn, duration2, {scale:0,transformOrigin:'center'});
+		TweenMax.to(circArray, duration2, {rotation: '+=2000', ease:Sine.easeOut, onComplete: hideEl(clickedEl)});
+
+		tlArray1[btnIndex].play('clickSection');
+		tlArray1[btnIndex].reverse();
+
+		//hideEl(clickedEl);
+	}
+
+	function animateBtnSVGReverse (e) {
+		var clickedEl = e.data.el;
+		var btnIndex = clickedEl.attr('id').slice(-1);
+		// make your circle array and animate the part that can't be staggered to
+		for (var j = strokeNum; j > 0; j--) {
+			curId = 'btnId'+j+btnIndex; // select id iteratively
+			cE = document.getElementById(curId); // select each circle the old fashioned way
+			TweenMax.to(cE, duration1, {css:{strokeWidth: 0}, ease: Back.easeOut.config(5), delay: (1*j) / 50});
+		}
+		tlArray2[btnIndex].reverse();
+		tlArray1[btnIndex].reverse();
+	}
+
+	for (var k = 0; k < btnArr.length ; k++) {
+		btnArr[k].on('mouseenter', {el: btnArr[k]}, animateBtnSVG);
+		btnArr[k].on('click dope-click', {el: btnArr[k]}, animateBtnSVGClick);
+		btnArr[k].on('mouseleave', {el: btnArr[k]}, animateBtnSVGReverse);
+	}
+
+
 });
