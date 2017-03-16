@@ -20,6 +20,8 @@ $(function() {
 	newHeight = 0,
 	expandHeight = 406,
 	expandHeightMobile = 270,
+	scrollHeight = 0,
+	expandStagger = 0,
 	$squishyEl = '',
 	divOffsetMobile = $('#Work').offset().top + 300,
 	divOffset = divOffsetMobile + 200,
@@ -28,7 +30,8 @@ $(function() {
 	$projTitle = $('.project-title'),
 	$projSubTitle = $('.project-subtitle'),
 	$projReturn = $('.project-return'),
-	scrollReady = false;
+	scrollReady = false,
+	openDelay = 2000;
 	
 	// prepare project banner array and load animations 
 	for (var i = 0; i < $projectBanners.length; i++) {
@@ -37,11 +40,11 @@ $(function() {
 	}
 
 	function loadProject (e) {
-		var clickedId = $(e.target).parents('.project-banner').attr('id'),
-		svgId = $('#' + clickedId).find('.btn-project-explode').attr('id'),
-		$svgContainer = $('#' + svgId);
+		var clickedId = $(e.target).parents('.project-banner').attr('id');
+	//	svgId = $('#' + clickedId).find('.btn-project-explode').attr('id');
+	//	$svgContainer = $('#' + svgId);
 
-		$svgContainer.trigger('dope-click');
+	//	$svgContainer.trigger('dope-click');
 		prepNext(clickedId);
 
 		setTimeout (function () {
@@ -50,15 +53,16 @@ $(function() {
 			$('#' + clickedId + 'Return').load(clickedId + '.html #' + clickedId + 'Inner', function() {
 				toggleProjectBanners(clickedId);
 				jump(clickedId, false);
+				$projTitle.css('top', '45px');
+				$projSubTitle.css('top', '45px');
 			});
-		}, 2000);
+		}, openDelay);
 	}
 	
 	function toggleProjectBanners (openId) {
 		for (var i = 0; i < $projectBanners.length; i++) {
 			if ($projectBanners.eq(i).attr('id') !== openId) {	
-				$projectBanners.eq(i).height(0);
-				$projectBanners.eq(i).trigger('sticky_kit:detach');
+				$projectBanners.eq(i).height(0).trigger('sticky_kit:detach');
 			}
 		}
 	}
@@ -83,15 +87,20 @@ $(function() {
 
 		if (uClosedTho === 'yup') {
 			// clear all project return divs
-			
 			$projReturn.empty();
-			if (document.documentElement.clientWidth > 480) {
-				TweenLite.to(window, 0, {scrollTo:{y: 2100, autokill: false, immediateRender: false}});
-				TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandHeight}, tweenTimeFast);
+
+			if (document.documentElement.clientWidth > 890) {
+				scrollHeight = 2100;
+				expandStagger = expandHeight;
+			} if (document.documentElement.clientWidth > 480) {
+				scrollHeight = 1850;
+				expandStagger = expandHeight;
 			} else {
-				TweenLite.to(window, 0, {scrollTo:{y: 1600, autokill: false, immediateRender: false}});
-				TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandHeightMobile}, tweenTimeFast);
+				scrollHeight = 1600;
+				expandStagger = expandHeightMobile;
 			}
+			TweenLite.to(window, 0, {scrollTo:{y: scrollHeight, autokill: false, immediateRender: false}});
+			TweenMax.staggerTo($projectBanners, tweenTimeFast, {height: expandStagger}, tweenTimeFast);
 		}
 		$projTitle.css('top', '0px');
 		$projSubTitle.css('top', '0px');
@@ -168,8 +177,8 @@ $(function() {
 							newHeight = Math.max(100, ($squishyEl.height() - diff));
 							if (newHeight < 301) {
 								$squishyEl.height(newHeight);
-								title.css('top', '45px');
-								subTitle.css('top', '45px');
+								//title.css('top', '45px');
+								//subTitle.css('top', '45px');
 							}
 						}
 
@@ -179,8 +188,8 @@ $(function() {
 							newHeight = Math.min(300, ($squishyEl.height() + ( diff * -1)));
 							if (newHeight > 100) {
 								$squishyEl.height(newHeight);
-								title.css('top', '0px');
-								subTitle.css('top', '0px');
+								//title.css('top', '0px');
+								//subTitle.css('top', '0px');
 							}
 						}
 
