@@ -33,18 +33,14 @@ $(function() {
 	scrollReady = false,
 	openDelay = 2000;
 	
-	// prepare project banner array and load animations 
+	// prep button array
 	for (var i = 0; i < $projectBanners.length; i++) {
-		// prep buttons
 		btnArr[i] = $('#btnExplodeContainer'+i);
 	}
 
 	function loadProject (e) {
 		var clickedId = $(e.target).parents('.project-banner').attr('id');
-	//	svgId = $('#' + clickedId).find('.btn-project-explode').attr('id');
-	//	$svgContainer = $('#' + svgId);
 
-	//	$svgContainer.trigger('dope-click');
 		prepNext(clickedId);
 
 		setTimeout (function () {
@@ -57,6 +53,7 @@ $(function() {
 				$projSubTitle.css('top', '45px');
 			});
 		}, openDelay);
+
 	}
 	
 	function toggleProjectBanners (openId) {
@@ -130,8 +127,7 @@ $(function() {
 				TweenLite.to(window, 0, {scrollTo:{y: divOffset, autokill: false, immediateRender: false}});
 			}
 		} else {
-			// mobile size
-			// we are not sticking in mobile
+			// mobile size, no sticking
 			$projReturn.height('100%');
 			initialHeight = 0;
 			$squishyEl = $projEl;
@@ -160,44 +156,40 @@ $(function() {
 	 * background-attachment perhaps
 	*/
 	
-		$(window).scroll(function() { 		// make this better
-			if (scrollReady && document.documentElement.clientWidth > 480) {
-				if ($squishyEl !== '') {
-					var curH = $(this).scrollTop();
-					var title = title || $squishyEl.find('.project-title');
-					var subTitle = subTitle || $squishyEl.find('.project-subtitle');
-					if (initialHeight === 0) {
-						initialHeight = curH;
-					}
-					var diff = (curH - initialHeight) / 3;
-
-					if (curH > lastScrollTop) {  // Going Down
-			
-						if ($squishyEl.height() > 100 && $squishyEl.height() < 301) {
-							newHeight = Math.max(100, ($squishyEl.height() - diff));
-							if (newHeight < 301) {
-								$squishyEl.height(newHeight);
-								//title.css('top', '45px');
-								//subTitle.css('top', '45px');
-							}
-						}
-
-					} else {  // Going Up
-						
-						if ($squishyEl.height() < 300 && curH < initialHeight) {
-							newHeight = Math.min(300, ($squishyEl.height() + ( diff * -1)));
-							if (newHeight > 100) {
-								$squishyEl.height(newHeight);
-								//title.css('top', '0px');
-								//subTitle.css('top', '0px');
-							}
-						}
-
-					}
-					lastScrollTop = curH;
+	$(window).scroll(function() { 		// make this better
+		if (scrollReady && document.documentElement.clientWidth > 480) {
+			if ($squishyEl !== '') {
+				var curH = $(this).scrollTop();
+				var title = title || $squishyEl.find('.project-title');
+				var subTitle = subTitle || $squishyEl.find('.project-subtitle');
+				if (initialHeight === 0) {
+					initialHeight = curH;
 				}
+				var diff = (curH - initialHeight) / 3;
+
+				if (curH > lastScrollTop) {  // Going Down
+		
+					if ($squishyEl.height() > 100 && $squishyEl.height() < 301) {
+						newHeight = Math.max(100, ($squishyEl.height() - diff));
+						if (newHeight < 301) {
+							$squishyEl.height(newHeight);
+						}
+					}
+
+				} else {  // Going Up
+					
+					if ($squishyEl.height() < 300 && curH < initialHeight) {
+						newHeight = Math.min(300, ($squishyEl.height() + ( diff * -1)));
+						if (newHeight > 100) {
+							$squishyEl.height(newHeight);
+						}
+					}
+
+				}
+				lastScrollTop = curH;
 			}
-		});
+		}
+	});
 
 	/* ----------------
 		 /WINDOW SCROLLING

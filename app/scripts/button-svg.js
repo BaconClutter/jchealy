@@ -3,11 +3,11 @@
 
 'use strict';
 
-function getRandomInt(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 $(function() {
+
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 
 	var $exploderButtons = $('.btn-project-explode'),
 	jitMin = 25,
@@ -35,7 +35,7 @@ $(function() {
 	timeLineArray = [];
 
 	/* ---------------------------------------
-	// begin mega loop for each exploder button
+		- Begin mega loop for each exploder button
 		- Also create and add your things to timelines so you're only doing it once
 	--------------------------------------- */
 	$exploderButtons.each(function(index) {
@@ -84,8 +84,6 @@ $(function() {
 			$curId = $('#'+curId); // make a unique jquery object out of each id 
 			tempCircArr.push($curId);
 			tlC.to($curId, duration1, {css:{strokeWidth: jitStroke}, ease: Back.easeOut.config(5)}, ((1*i) / 50));
-
-
 		}
 
 		timeLineArray.push(tlC);
@@ -170,7 +168,6 @@ $(function() {
 		tlArray1[btnIndex].play('clickSection');
 		tlArray1[btnIndex].reverse();
 	}
-
 
 	for (var k = 0; k < btnArr.length ; k++) {
 		btnArr[k].on('mouseenter', {el: btnArr[k]}, animateBtnSVG)
