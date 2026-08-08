@@ -174,6 +174,13 @@ cd /Users/jhealy/Projects/web-projects/jchealy
 mkdir -p src/_data src/_includes/layouts src/projects src/styles src/scripts src/vendor src/images
 ```
 
+> **Gitignore `_site` before the first build.** From this task onward every build writes to `_site/`, and several later tasks stage with `git add -A` — so if `_site` isn't ignored, build output gets committed. (Task 14 rewrites `.gitignore` wholesale and includes `_site`, but that is far too late.) Add it now:
+>
+> ```bash
+> grep -qx '_site' .gitignore || printf '_site\n' >> .gitignore
+> git check-ignore _site && echo "ignored"
+> ```
+
 - [ ] **Step 2: Write `eleventy.config.js`**
 
 ```js
