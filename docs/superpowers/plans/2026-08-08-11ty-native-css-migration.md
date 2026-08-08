@@ -44,17 +44,34 @@ git diff -- Gruntfile.js app/index.html app/styles/main.scss package.json
 ```
 Expected: diff shows exactly the fixes described above (Dart Sass engine, `grunt-contrib-connect` 5.x, `wiredep` block disabled, `.work-inner-container { width: 100% }`, contact-info block removed) and nothing unexpected.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Capture the compiled-CSS reference snapshot while the old toolchain still works**
+
+Tasks 8–10 port `app/styles/main.scss` to native CSS using the **compiled** output as source of truth (see the methodology note above). Task 2 replaces `package.json`, which removes Grunt from `node_modules` — so capture this snapshot now, while `npx grunt sass` still runs. It's committed temporarily and deleted at cutover (Task 14).
+
+```bash
+cd /Users/jhealy/Projects/web-projects/jchealy
+npx grunt sass
+mkdir -p docs/superpowers/reference
+cp .tmp/styles/main.css docs/superpowers/reference/compiled-main.css
+wc -l docs/superpowers/reference/compiled-main.css
+```
+Expected: ~7500 lines. This file is the authoritative answer for any "what does this Sass actually compile to?" question in Tasks 8–10.
+
+- [ ] **Step 4: Commit**
 
 ```bash
 git add -A
 git commit -m "$(cat <<'EOF'
-Fix legacy Grunt/Sass/Bower toolchain and remove stray duplicate file
+Fix legacy Grunt/Sass/Bower toolchain, snapshot compiled CSS
 
 Restores a working local dev environment (Dart Sass, modern
 grunt-contrib-connect, wiredep no longer clobbers hand-curated script
 includes) ahead of the 11ty migration, and removes app/reverbnation.md,
 an untracked duplicate of app/projectArtistProfile.html.
+
+Also snapshots the compiled CSS to docs/superpowers/reference/ as the
+source of truth for the hand port in later tasks — the old toolchain
+stops working once package.json is replaced. Removed at cutover.
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 EOF
@@ -69,8 +86,10 @@ Expected: commit succeeds, `git status` shows a clean working tree.
 
 **Files:**
 - Create: `package.json` (full rewrite)
-- Delete: `package-lock.json`, `bower.json`, `.bowerrc`, `Gruntfile.js`, `main.scss` (stray unused root-level file, confirmed unreferenced by any build step or HTML), `.yo-rc.json`
+- Delete: `package-lock.json`
 - Create: `.nvmrc`
+
+> **Deliberately NOT deleted yet:** `Gruntfile.js`, `bower.json`, `.bowerrc`, `bower_components/`, `main.scss`, `.yo-rc.json`, `.jshintrc`, `app/`, `test/`. Task 4 still needs to copy vendor JS out of `bower_components/`, and the design spec's migration strategy is explicit that nothing gets removed until its replacement is proven. All of these are deleted together in Task 14, after verification passes.
 
 - [ ] **Step 1: Create the branch**
 
@@ -80,14 +99,13 @@ git checkout -b 11ty-migration
 ```
 Expected: `Switched to a new branch '11ty-migration'`
 
-- [ ] **Step 2: Remove old-toolchain files**
+- [ ] **Step 2: Clear the old dependency tree**
 
 ```bash
-git rm -r --cached node_modules 2>/dev/null; rm -rf node_modules
-rm -f package-lock.json bower.json .bowerrc Gruntfile.js main.scss .yo-rc.json
-rm -rf bower_components .tmp
+rm -rf node_modules package-lock.json .tmp
+ls bower_components/ >/dev/null && echo "bower_components still present (needed by Task 4) — good"
 ```
-Expected: files removed; `bower_components` and `.tmp` were already gitignored so this is just local cleanup, not a git change yet.
+Expected: `node_modules`/`package-lock.json`/`.tmp` gone, `bower_components` still present. (`bower_components` and `.tmp` are gitignored, so this is local cleanup, not a git change.)
 
 - [ ] **Step 3: Write the new `package.json`**
 
@@ -247,7 +265,6 @@ The npm `gsap` package is now major version 3, a different API from the `TweenMa
 
 ```bash
 cd /Users/jhealy/Projects/web-projects/jchealy
-git show HEAD~2:bower_components 2>/dev/null || true  # bower_components is gitignored, not in git — copy from disk
 mkdir -p src/vendor/bootstrap
 cp bower_components/jquery/dist/jquery.js src/vendor/jquery.js
 cp bower_components/gsap/src/minified/TweenMax.min.js src/vendor/TweenMax.min.js
@@ -261,7 +278,7 @@ cp bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/button.
 cp bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/collapse.js src/vendor/bootstrap/collapse.js
 ```
 
-> **Note:** if `bower_components/` no longer exists on disk by the time this task runs (e.g. a fresh checkout without ever running the old `bower install`), regenerate it first with `npx bower install` before copying — the old toolchain's `.bowerrc`/`bower.json` were deleted in Task 2, so check them out from the previous commit temporarily: `git show HEAD~1:bower.json > /tmp/bower.json.bak && git show HEAD~1:.bowerrc > /tmp/bowerrc.bak`, run `npx bower install` with those configs, copy the files above, then discard the temp bower files. This is a one-time bootstrap concern only.
+> **Note:** `bower_components/` is gitignored, so it exists on disk but not in git. Task 2 deliberately left it in place for this step. If it's somehow missing (e.g. a fresh clone that never ran the old `bower install`), regenerate it with `npx bower install` first — `bower.json` and `.bowerrc` are still present until Task 14.
 
 - [ ] **Step 2: Verify file sizes match what was audited during planning**
 
@@ -385,35 +402,33 @@ EOF
 
 This is the data-driven improvement described in the design spec — one entry per project, driving both the homepage banner and (via `id`) the matching detail-page URL and background-image class from Task 7 onward.
 
+Note there is deliberately **no** `btnIndex` field. `button-svg.js` builds its SVG button arrays with `.each(function(index) { Snap('#btnExplode' + index); ... })`, so the numeric suffixes must be contiguous `0..n-1` in DOM order. Hardcoding them in JSON would silently break the moment a project is removed from the middle of the list — which is exactly the Helios-removal follow-up this data file is meant to make easy. The template derives them from Nunjucks' `loop.index0` instead, so they always renumber correctly.
+
 ```json
 [
   {
     "id": "projectArtistProfile",
     "bannerClass": "project-artistprofile",
     "title": "ReverbNation Artist Profile",
-    "subtitle": "Musician Homepage",
-    "btnIndex": 0
+    "subtitle": "Musician Homepage"
   },
   {
     "id": "projectHillRom",
     "bannerClass": "project-hillrom",
     "title": "Hill-Rom Caregiver Intelligence Suite",
-    "subtitle": "Multi-platform patient and medical device status application",
-    "btnIndex": 1
+    "subtitle": "Multi-platform patient and medical device status application"
   },
   {
     "id": "projectSSA",
     "bannerClass": "project-ssa",
     "title": "TowerCo Geospatial Support",
-    "subtitle": "GIS Web Application",
-    "btnIndex": 2
+    "subtitle": "GIS Web Application"
   },
   {
     "id": "projectHTA",
     "bannerClass": "project-hta",
     "title": "Helios Towers Africa",
-    "subtitle": "Responsive Web Application",
-    "btnIndex": 3
+    "subtitle": "Responsive Web Application"
   }
 ]
 ```
@@ -551,13 +566,13 @@ title: John C. Healy - UX, UI, and Interaction Design
           <h2 class="project-title">{{ project.title }}</h2>
           <h3 class="project-subtitle">{{ project.subtitle }}</h3>
 
-          <div class="btn-project-explode" id="btnExplodeContainer{{ project.btnIndex }}">
-            <svg class="btn-svg" id="btnExplode{{ project.btnIndex }}"></svg>
+          <div class="btn-project-explode" id="btnExplodeContainer{{ loop.index0 }}">
+            <svg class="btn-svg" id="btnExplode{{ loop.index0 }}"></svg>
           </div>
 
           <button class="btn-project-close btn-project-off" id="{{ project.id }}Close" data-close="">
-            <div id="btnCloseContainer{{ project.btnIndex }}">
-              <svg class="btn-svg-close" id="btnClose{{ project.btnIndex }}"></svg>
+            <div id="btnCloseContainer{{ loop.index0 }}">
+              <svg class="btn-svg-close" id="btnClose{{ loop.index0 }}"></svg>
             </div>
           </button>
         </div>
@@ -599,7 +614,7 @@ title: John C. Healy - UX, UI, and Interaction Design
             <h4 class="contact-form-subtitle">UX, UI &amp; Interaction Design</h4>
             <!-- Contact Form -->
             <div id="form-div">
-             <form class="form" id="contactForm" name="contactForm" method="post" data-netlify="true" action="/">
+             <form class="form" id="contactForm" name="contactForm" role="form" method="post" data-netlify="true" action="/">
               <input type="hidden" name="form-name" value="contactForm" />
 
               <div class="name">
@@ -671,7 +686,9 @@ EOF
 - Create: `src/projects/towerco.njk` (`permalink: /projectSSA.html`)
 - Create: `src/projects/helios.njk` (`permalink: /projectHTA.html`)
 
-These keep their exact current flat URLs — `app/scripts/main.js`'s `.load(clickedId + '.html #' + clickedId + 'Inner', ...)` targets those filenames directly, and that JS isn't being touched. Each file's `<div class="project-expanded" id="...Inner">` body is copied verbatim from the corresponding `app/project*.html` fragment — only the front matter (permalink, and `layout: false` since these are ajax-loaded fragments, not full pages) is new.
+These keep their exact current flat URLs — `app/scripts/main.js`'s `.load(clickedId + '.html #' + clickedId + 'Inner', ...)` targets those filenames directly, and that JS isn't being touched. Each file's `<div class="project-expanded" id="...Inner">` body is copied verbatim from the corresponding `app/project*.html` fragment; the only new thing is the `permalink` front matter.
+
+No `layout` key is set on these, so 11ty applies none and each page renders as a bare fragment. That's intentional and matches current behavior: the existing `app/project*.html` files are technically full documents but with a completely empty `<head>` (no stylesheet, no scripts), so visiting one directly has always shown unstyled content. jQuery's `.load()` only extracts the `#...Inner` subtree and injects it into the already-styled homepage, so the wrapper never mattered.
 
 - [ ] **Step 1: Create `src/projects/artist-profile.njk`**
 
@@ -680,7 +697,6 @@ cd /Users/jhealy/Projects/web-projects/jchealy
 {
   echo "---"
   echo "permalink: /projectArtistProfile.html"
-  echo "layout: false"
   echo "---"
   sed -n '/<div class="project-expanded"/,/<\/body>/p' app/projectArtistProfile.html | sed '$d'
 } > src/projects/artist-profile.njk
@@ -692,7 +708,6 @@ cd /Users/jhealy/Projects/web-projects/jchealy
 {
   echo "---"
   echo "permalink: /projectHillRom.html"
-  echo "layout: false"
   echo "---"
   sed -n '/<div class="project-expanded"/,/<\/body>/p' app/projectHillRom.html | sed '$d'
 } > src/projects/hillrom.njk
@@ -700,7 +715,6 @@ cd /Users/jhealy/Projects/web-projects/jchealy
 {
   echo "---"
   echo "permalink: /projectSSA.html"
-  echo "layout: false"
   echo "---"
   sed -n '/<div class="project-expanded"/,/<\/body>/p' app/projectSSA.html | sed '$d'
 } > src/projects/towerco.njk
@@ -708,7 +722,6 @@ cd /Users/jhealy/Projects/web-projects/jchealy
 {
   echo "---"
   echo "permalink: /projectHTA.html"
-  echo "layout: false"
   echo "---"
   sed -n '/<div class="project-expanded"/,/<\/body>/p' app/projectHTA.html | sed '$d'
 } > src/projects/helios.njk
@@ -720,7 +733,7 @@ cd /Users/jhealy/Projects/web-projects/jchealy
 for pair in "artist-profile:projectArtistProfile" "hillrom:projectHillRom" "towerco:projectSSA" "helios:projectHTA"; do
   new="${pair%%:*}"; old="${pair##*:}"
   echo "=== $new vs $old ==="
-  diff <(tail -n +5 "src/projects/$new.njk") <(sed -n '/<div class="project-expanded"/,/<\/body>/p' "app/$old.html" | sed '$d')
+  diff <(tail -n +4 "src/projects/$new.njk") <(sed -n '/<div class="project-expanded"/,/<\/body>/p' "app/$old.html" | sed '$d')
 done
 ```
 Expected: no diff output for any of the four pairs.
@@ -731,7 +744,12 @@ Expected: no diff output for any of the four pairs.
 npx @11ty/eleventy
 ls _site/project*.html
 ```
-Expected: `_site/projectArtistProfile.html`, `_site/projectHillRom.html`, `_site/projectSSA.html`, `_site/projectHTA.html` — matching today's live URLs exactly, no `layout: false` leaking a layout wrapper around them (they should NOT contain the vendor `<script>` tags from `base.njk`, since main.js loads only the `#...Inner` fragment via ajax and injects it into the already-loaded homepage).
+Expected: `_site/projectArtistProfile.html`, `_site/projectHillRom.html`, `_site/projectSSA.html`, `_site/projectHTA.html` — matching today's live URLs exactly. Confirm no layout leaked in:
+
+```bash
+grep -L "vendor/jquery.js" _site/project*.html
+```
+Expected: all four filenames listed (i.e. none of them contain the layout's script tags).
 
 - [ ] **Step 5: Commit**
 
@@ -805,19 +823,150 @@ Code Style: http://codeguide.co/#css
 }
 
 /* ==========================================================================
-   Base (replaces the slice of Bootstrap base/normalize actually used)
+   Base layer
+
+   This replaces the parts of Bootstrap's normalize + scaffolding + type
+   layers that the site actually depends on. Do not trim this section
+   thinking it's boilerplate — every rule here is load-bearing, verified
+   against docs/superpowers/reference/compiled-main.css:
+
+   - `box-sizing: border-box` is what makes every percentage-width column
+     in Tasks 9-10 line up, since they all also carry 15px side padding.
+     Without it the entire grid math is wrong.
+   - The body font-size/line-height/color are inherited by all copy.
+   - The heading margins/sizes are relied on by .project-title (h2),
+     .project-subtitle (h3), and every h3/h4/h5/h6 inside the project
+     detail pages, which set colors but not sizes or spacing.
+   - `p { margin: 0 0 10px }` spaces all body copy.
+   - `button, input, textarea { font: inherit }` is what makes the form
+     controls and the nav/close buttons use Montserrat instead of the
+     browser default form font.
    ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+  font-size: 10px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #333333;
+  background-color: #fff;
+  padding-top: 0px;
+  padding-bottom: 0;
+  font-family: var(--font-main);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+h1, h2, h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+h4, h5, h6 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h1 { font-size: 36px; }
+h2 { font-size: 30px; }
+h3 { font-size: 24px; }
+h4 { font-size: 18px; }
+h5 { font-size: 14px; }
+h6 { font-size: 12px; }
+
+p {
+  margin: 0 0 10px;
+}
+
+a {
+  background: transparent;
+  color: #428bca;
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: #2a6496;
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+a:hover {
+  outline: 0;
+}
+
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+button {
+  overflow: visible;
+  text-transform: none;
+}
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+input {
+  line-height: normal;
+}
+
+textarea {
+  overflow: auto;
+}
+
+/* eleventy-img (Task 11) emits <picture><img …></picture> when it outputs
+   more than one format. `display: contents` removes the <picture> box from
+   layout so the inner <img> participates in its parent's layout directly —
+   without this, `.center-block`'s `display:block; margin:auto` centering
+   breaks, because the inline <picture> wrapper would be what's laid out. */
+picture {
+  display: contents;
+}
 
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
-}
-
-body {
-  padding-top: 0px;
-  font-family: var(--font-main);
 }
 
 .container-fluid {
@@ -1027,6 +1176,16 @@ body {
   }
 }
 
+/* `text-decoration: none` on hover/focus comes from Bootstrap's own
+   `.nav > li > a:hover, :focus` rule. It must be carried over explicitly —
+   the base layer's `a:hover { text-decoration: underline }` would
+   otherwise underline every nav link on hover, which the live site
+   does not do. */
+.nav > li > a:hover,
+.nav > li > a:focus {
+  text-decoration: none;
+}
+
 .nav > li > a:visited,
 .nav > li > a:focus {
   background-color: transparent;
@@ -1169,10 +1328,10 @@ body {
   }
 }
 
-/* NOTE: main.scss also had a `.nav-collapse > ul { li { margin-bottom: 50px } } }`
-   rule here — omitted. `.nav-collapse` (no "navbar-" prefix) doesn't match
-   anything in index.njk's markup or any selector in main.js; grepping the
-   whole site confirms it. It was already dead CSS in the live site. */
+/* NOTE: main.scss also had a `.nav-collapse > ul` rule (setting a 50px
+   bottom margin on its list items) — omitted here. `.nav-collapse`, without
+   the "navbar-" prefix, matches nothing in the markup and is referenced by
+   no selector in any script; it was already dead CSS in the live site. */
 ```
 
 - [ ] **Step 3: Wire it into the layout and build**
@@ -1887,9 +2046,17 @@ img.img-contact {
   box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 }
 
-/* .contact-info / #contactSpinner rules intentionally omitted — the email/
-   phone list and spinner graphic they styled were already removed from
-   index.njk (ported from the already-committed removal in app/index.html). */
+/* Intentionally omitted from this port, all confirmed dead:
+   - `.contact-info`, `#contactSpinner`, `#contactSpinnerParent` (+ its
+     `:hover`) — the email/phone list and spinner graphic these styled were
+     already removed from the markup (see the committed contact-info removal
+     that index.njk was ported from).
+   - `@keyframes spin` / `@keyframes backspin` — only ever referenced by the
+     two spinner rules above, so they go with them.
+   - `.declaration-order` — never a real style; it was a CSS-property-order
+     style guide crib note left at the top of main.scss, matching no markup.
+   If the spinner is ever reinstated, all of the above are recoverable from
+   git history (app/styles/main.scss). */
 
 /* ==========================================================================
    Row / col-sm-6 (used by the Contact section's two-column layout)
@@ -1944,6 +2111,11 @@ img.img-contact {
 
 .feedback-input:focus {
   background: var(--color-tan);
+  /* `box-shadow: 0` is invalid CSS — copied verbatim from main.scss on
+     purpose. Browsers discard the declaration, so the focused input keeps
+     the inset shadow inherited from .feedback-input above. "Correcting"
+     this to `none` would remove that shadow on focus, i.e. it would be a
+     real visual change, not a cleanup. Leave it alone. */
   box-shadow: 0;
   border: none;
   color: var(--color-dark-blue);
@@ -2076,6 +2248,11 @@ Expected: roughly 33 files copied (41 total minus the 6 already-handled minus th
 
 - [ ] **Step 2: Add the image shortcode to `eleventy.config.js`**
 
+Two details in the config below that matter and are easy to get wrong:
+
+- **`formats: ["webp", "auto"]`, not `["webp", "jpeg"]`.** Every PNG on this site (`johnhealy-m.png`, `about.png`, `work.png`, `contact.png`, `about-headshot.png`, and all the project screenshots) has an alpha channel, and they sit on dark blue / tan / red backgrounds. Forcing a JPEG fallback would flatten transparency to a solid box behind each one — a glaring visual regression. `"auto"` keeps each image's original format as the fallback.
+- **`sizes: "100vw"`** is a deliberate simplification. Several of these images render at 40–80% of their container, so `100vw` will make browsers pick a larger candidate than strictly needed. That costs some bandwidth but is never *wrong*, and getting per-image `sizes` right would mean hand-tuning a dozen call sites for a site that currently ships completely unoptimized images. Worth revisiting later; not worth blocking this migration.
+
 ```js
 import eleventyImage from "@11ty/eleventy-img";
 
@@ -2094,19 +2271,24 @@ export default function (eleventyConfig) {
     "src/images/banner-mobile-hta.jpg": "images/banner-mobile-hta.jpg",
   });
 
-  eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass) {
-    if (!alt) {
-      throw new Error(`Missing alt text for image: ${src}`);
+  eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass, id) {
+    // Note: check for `undefined`, NOT falsiness — alt="" is a valid and
+    // meaningful value (decorative image, hidden from screen readers), and
+    // most of this site's images are decorative. A `!alt` check would
+    // throw on every one of them.
+    if (alt === undefined) {
+      throw new Error(`Missing alt text for image: ${src} (pass "" if decorative)`);
     }
     const metadata = await eleventyImage(`./src/images/${src}`, {
       widths: [400, 800, 1200, null],
-      formats: ["webp", "jpeg"],
+      formats: ["webp", "auto"],
       outputDir: "./_site/images/",
       urlPath: "/images/",
     });
     const imageAttributes = {
       alt,
       class: cssClass || undefined,
+      id: id || undefined,
       sizes: "100vw",
       loading: "lazy",
       decoding: "async",
@@ -2132,9 +2314,9 @@ Replace each of these five lines:
 ```
 with:
 ```njk
-{% image "johnhealy-m.png", "John Healy typographic banner text" %}
+{% image "johnhealy-m.png", "John Healy typographic banner text", "img-responsive", "introImg" %}
 ```
-(the shortcode's generated `<img>` doesn't take an `id`; if `#introImg` styling needs a hook, wrap it: `<span id="introImg">{% image "johnhealy-m.png", "John Healy typographic banner text" %}</span>` — check Task 13's visual diff to see if this is actually needed, since `#introImg` is only referenced by CSS `width`/`vertical-align` rules that could equally target the wrapper.)
+(the 4th argument is the `id`, which the shortcode applies to the generated `<img>` — `#introImg` carries real layout rules (`width: 60%`, `vertical-align: middle`), so it has to land on the image element itself, not a wrapper.)
 
 ```njk
 <img class="img-responsive img-about" src="/images/about.png" />
@@ -2279,14 +2461,37 @@ Leave this running; it serves at `http://localhost:8080`.
 
 - [ ] **Step 2: Run the old site locally, side by side**
 
-In a second terminal, temporarily check out the pre-migration state to compare against (or use the already-running Grunt setup if it's still up from earlier in this project's history):
+In a second terminal, check out the pre-migration state in a throwaway worktree. At this point `master` is still the old toolchain (the migration branch hasn't merged yet), so this gives a true before/after comparison:
 ```bash
+cd /Users/jhealy/Projects/web-projects/jchealy
 git worktree add /tmp/jchealy-old master
-cd /tmp/jchealy-old && npm install --legacy-peer-deps && npx grunt serve --no-open --port=9000
+cd /tmp/jchealy-old && npm install --legacy-peer-deps && npx bower install && npx grunt serve --no-open
 ```
-Serves at `http://localhost:9000`.
+Serves at `http://localhost:9000` (the port is set in that Gruntfile's `connect` config — there's no `--port` CLI flag for it). The `bower install` is needed because `bower_components/` is gitignored and so isn't present in a fresh worktree.
 
-- [ ] **Step 3: Visual comparison checklist (desktop width, e.g. 1280px)**
+Note this worktree's `grunt serve` will rewrite its own `app/index.html` via `wiredep` — harmless, since the whole worktree is discarded in Step 7.
+
+- [ ] **Step 3: Spot-check the base layer numerically before eyeballing anything**
+
+The base layer added in Task 8 (box-sizing, body/heading/paragraph metrics) is what the whole hand-ported grid depends on, and a mistake there shows up as subtle drift everywhere rather than one obvious broken thing. Compare computed values directly in both browsers' devtools consoles:
+
+```js
+JSON.stringify({
+  boxSizing: getComputedStyle(document.body).boxSizing,
+  bodyFont: getComputedStyle(document.body).fontFamily,
+  bodySize: getComputedStyle(document.body).fontSize,
+  bodyLineHeight: getComputedStyle(document.body).lineHeight,
+  h2Title: (() => { const e = document.querySelector('.project-title');
+    const s = getComputedStyle(e); return [s.fontSize, s.marginTop, s.marginBottom]; })(),
+  para: (() => { const e = document.querySelector('.about-inner-container p');
+    const s = getComputedStyle(e); return [s.fontSize, s.marginBottom, s.paddingTop]; })(),
+  workBanner: document.querySelector('.project-banner').getBoundingClientRect().width,
+  input: getComputedStyle(document.querySelector('.feedback-input')).fontFamily,
+}, null, 2)
+```
+Expected: identical output from `localhost:8080` and `localhost:9000`. `boxSizing` must be `border-box`; the input's `fontFamily` must be Montserrat, not a browser default.
+
+- [ ] **Step 4: Visual comparison checklist (desktop width, e.g. 1280px)**
 
 Compare `localhost:8080` against `localhost:9000` for each:
 - [ ] Header/intro: signature animation renders, "UX, UI & INTERACTION DESIGN" positioned identically
@@ -2298,28 +2503,28 @@ Compare `localhost:8080` against `localhost:9000` for each:
 - [ ] Contact section: two-column layout at desktop width, no email/phone/spinner visible (matches the already-committed removal), social icons render and link correctly
 - [ ] Fill out and submit the contact form: on the Netlify-deployed preview (not local — Netlify Forms only works on an actual Netlify deploy), confirm a submission appears in the Netlify dashboard's Forms tab
 
-- [ ] **Step 4: Visual comparison checklist (mobile width, e.g. 375px)**
+- [ ] **Step 5: Visual comparison checklist (mobile width, e.g. 375px)**
 
 - [ ] Hamburger nav toggle opens/closes the fullscreen mobile nav (this depends on `collapse.js` + the hand-written `.collapse`/`.navbar-collapse` CSS from Task 8 — the highest-risk hand-converted piece in this migration)
 - [ ] Project banners stack full-width, "+" buttons still work, detail content still ajax-loads
 - [ ] Contact form still usable, two-column layout collapses to stacked
 
-- [ ] **Step 5: Compare against the actual live site**
+- [ ] **Step 6: Compare against the actual live site**
 
 Repeat the desktop + mobile checklists above against `https://www.jchealy.com` directly, not just the local old-toolchain copy — this catches anything that might have drifted between `master` and what's actually deployed.
 
-- [ ] **Step 6: Clean up the comparison worktree**
+- [ ] **Step 7: Clean up the comparison worktree**
 
 ```bash
 cd /Users/jhealy/Projects/web-projects/jchealy
 git worktree remove /tmp/jchealy-old --force
 ```
 
-- [ ] **Step 7: Fix anything found, then re-run the relevant checklist items**
+- [ ] **Step 8: Fix anything found, then re-run the relevant checklist items**
 
 If any discrepancy turns up, fix it in the relevant `src/` file (most likely `main.css`), rebuild, and re-check just that item — don't re-run the entire checklist for a one-line CSS fix, but do re-check the specific section that changed.
 
-- [ ] **Step 8: Commit any fixes made during verification**
+- [ ] **Step 9: Commit any fixes made during verification**
 
 ```bash
 git add -A
@@ -2339,17 +2544,23 @@ EOF
 Only do this once Task 13's verification is fully green.
 
 **Files:**
-- Delete: `app/` (entire directory — its contents now live under `src/`)
+- Delete: `app/` (entire directory — its contents now live under `src/`), including `app/sender.php` (the PHP mail backend, replaced by Netlify Forms) and `app/projectMFS.html` (an orphaned project page not linked from anywhere in the site)
 - Delete: `test/` (2014-era Mocha/Chai suite, per the design spec's non-goals — dropped, not ported)
+- Delete: `Gruntfile.js`, `bower.json`, `.bowerrc`, `bower_components/`, `main.scss`, `.yo-rc.json`, `.jshintrc` (all deferred from Task 2 so the old toolchain stayed available for reference until verification passed)
+- Delete: `docs/superpowers/reference/compiled-main.css` (the Task 1 snapshot — its job is done once the CSS port is verified)
 - Modify: `.gitignore` (remove now-irrelevant Grunt/Bower/Sass entries, add 11ty's `_site`)
 - Modify: `README.md` (replace the one-line placeholder with real run instructions)
 
-- [ ] **Step 1: Remove the old app tree and test suite**
+- [ ] **Step 1: Remove the old app tree, test suite, and legacy toolchain files**
 
 ```bash
 cd /Users/jhealy/Projects/web-projects/jchealy
 git rm -r app test
+git rm Gruntfile.js bower.json .bowerrc main.scss .yo-rc.json .jshintrc
+git rm docs/superpowers/reference/compiled-main.css
+rm -rf bower_components
 ```
+Expected: all removed. (`bower_components/` is gitignored, so plain `rm` is correct there — `git rm` would fail on it.)
 
 - [ ] **Step 2: Update `.gitignore`**
 
