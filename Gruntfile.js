@@ -80,10 +80,11 @@ module.exports = function (grunt) {
       livereload: {
         options: {
           middleware: function(connect) {
+            var serveStatic = require('serve-static');
             return [
-              connect.static('.tmp'),
-              connect().use('/bower_components', connect.static('./bower_components')),
-              connect.static(config.app)
+              serveStatic('.tmp'),
+              connect().use('/bower_components', serveStatic('./bower_components')),
+              serveStatic(config.app)
             ];
           }
         }
@@ -93,11 +94,12 @@ module.exports = function (grunt) {
           open: false,
           port: 9001,
           middleware: function(connect) {
+            var serveStatic = require('serve-static');
             return [
-              connect.static('.tmp'),
-              connect.static('test'),
-              connect().use('/bower_components', connect.static('./bower_components')),
-              connect.static(config.app)
+              serveStatic('.tmp'),
+              serveStatic('test'),
+              connect().use('/bower_components', serveStatic('./bower_components')),
+              serveStatic(config.app)
             ];
           }
         }
@@ -152,8 +154,9 @@ module.exports = function (grunt) {
     // Compiles Sass to CSS and generates necessary files if requested
     sass: {
       options: {
+        implementation: require('sass'),
         sourceMap: true,
-        includePaths: ['bower_components']
+        loadPaths: ['bower_components']
         },
       dist: {
         files: [{
