@@ -1,11 +1,4 @@
 node_modules
-dist
 _site
-.tmp
-.sass-cache
-bower_components
-build
-*.log
 .DS_Store
-app/.DS_Store
 .superpowers/
