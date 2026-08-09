@@ -1108,12 +1108,20 @@ picture {
   vertical-align: middle;
 }
 
-/* .intro-inner-container previously got Bootstrap's .container behavior via
-   Sass @extend: centered (margin auto), a width that steps
-   750px -> 970px -> 1170px at the 768/992/1200 breakpoints, further capped
-   at 1024px by its own max-width rule from 768px up (so it actually renders
-   at 750px, 970px, then 1024px — never the full 1170px). Written out
-   explicitly since native CSS has no @extend equivalent. */
+/* .intro-inner-container uses Sass `@extend .container`, but in PRODUCTION
+   that extend never reached Bootstrap's width-stepping @media blocks: the
+   live stylesheet's `@media (min-width:768px){.container{width:750px}}`
+   rules list `.container` alone. node-sass did not propagate @extend into
+   media queries; Dart Sass does, which is why the regenerated reference
+   file shows all four extended selectors there and is misleading here.
+   (This is the same mechanism behind the full-width Work-section bug fixed
+   earlier in this project's history.)
+
+   So production renders this element FLUID — centered, no width ladder —
+   capped only by its own max-width:1024px from 768px up. Verified against
+   the live stylesheet. Do not add width: 750/970/1170 rules here; an
+   earlier draft of this plan did, which made the intro narrower than
+   production everywhere between 768px and 1200px. */
 .intro-inner-container {
   position: relative;
   height: 100%;
@@ -1141,20 +1149,7 @@ picture {
 
 @media (min-width: 768px) { /* was $screen-sm-min */
   .intro-inner-container {
-    width: 750px;
     max-width: 1024px;
-  }
-}
-
-@media (min-width: 992px) { /* was $screen-md-min */
-  .intro-inner-container {
-    width: 970px;
-  }
-}
-
-@media (min-width: 1200px) { /* was $screen-lg-min */
-  .intro-inner-container {
-    width: 1170px;
   }
 }
 
@@ -1286,6 +1281,16 @@ picture {
     line-height: 20px;
     display: inline-block;
     color: var(--color-white);
+
+    /* Bootstrap bumps this to 15px at desktop and nothing in main.scss
+       overrides it, so production's desktop nav links are 10px taller than
+       the mobile-first base. Easy to miss: it lives in Bootstrap's navbar
+       layer, not in the site's own stylesheet. Verified against the live
+       stylesheet. */
+    @media (min-width: 768px) {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
   }
 }
 
@@ -1986,11 +1991,16 @@ EOF
   overflow: hidden;
 }
 
-/* .contact-inner-container gets the same Bootstrap .container behavior as
-   .intro-inner-container (width steps 750/970/1170 at 768/992/1200), plus
-   its own max-width:1200px from 480px up — which never actually clamps
-   anything, since the container's own widest step (1170px) is already
-   below 1200px. Included for fidelity even though it's a no-op. */
+/* Same story as .intro-inner-container: the Sass `@extend .container` never
+   reached Bootstrap's width-stepping @media blocks in production, because
+   node-sass did not propagate @extend into media queries (Dart Sass does,
+   so the regenerated reference file is misleading here — check the live
+   stylesheet instead). Production renders this FLUID, centered, capped only
+   by its own max-width:1200px from 480px up — and that cap is NOT a no-op:
+   it is what actually constrains the Contact section on wide screens.
+   Do not add width: 750/970/1170 rules here; an earlier draft of this plan
+   did, which made the whole Contact section narrower than production at
+   every width from 768px up (30px too narrow at >=1200px). */
 .contact-inner-container {
   position: relative;
   text-align: center;
@@ -2016,24 +2026,6 @@ EOF
     font-size: 13px;
     line-height: 160%;
     text-align: left;
-  }
-}
-
-@media (min-width: 768px) { /* was $screen-sm-min */
-  .contact-inner-container {
-    width: 750px;
-  }
-}
-
-@media (min-width: 992px) { /* was $screen-md-min */
-  .contact-inner-container {
-    width: 970px;
-  }
-}
-
-@media (min-width: 1200px) { /* was $screen-lg-min */
-  .contact-inner-container {
-    width: 1170px;
   }
 }
 
