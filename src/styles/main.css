@@ -912,3 +912,421 @@ img.about-headshot {
 .btn-project-off {
   display: none;
 }
+
+/* ==========================================================================
+   Project (expanded/detail content, loaded via ajax into .project-return)
+   ========================================================================== */
+
+.project-controls {
+  text-align: center;
+  padding-top: 0px;
+}
+
+.project-expanded {
+  & h3, & h4, & h5, & h6 {
+    text-align: center;
+  }
+}
+
+.project-expanded-section {
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+
+  &::before,
+  &::after {
+    content: " ";
+    display: table;
+  }
+
+  &::after {
+    clear: both;
+  }
+
+  & img {
+    padding-top: 60px;
+  }
+
+  & p:first-child {
+    padding-top: 40px;
+  }
+
+  @media (min-width: 480px) { /* was $screen-xs-min */
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+}
+
+.project-section-white {
+  background-color: white;
+
+  & h3 {
+    color: var(--color-bright-red);
+    font-weight: bold;
+  }
+  & h4 {
+    color: black;
+  }
+  & h5, & h6 {
+    color: var(--color-dark-gray);
+    font-weight: normal;
+  }
+  & p {
+    color: var(--color-dark-blue);
+  }
+}
+
+.project-section-gray {
+  background-color: var(--color-light-gray);
+
+  & h3 {
+    color: var(--color-light-blue);
+    font-weight: bold;
+  }
+}
+
+.project-section-gray-dark {
+  background-color: var(--color-darker-gray);
+
+  & h3 {
+    color: white;
+    font-weight: bold;
+  }
+  & p {
+    color: white;
+  }
+}
+
+.project-section-red {
+  background-color: var(--color-bright-red);
+
+  & h3 {
+    color: white;
+    font-weight: bold;
+  }
+  & p {
+    color: white;
+  }
+}
+
+.project-section-blue {
+  background-color: var(--color-light-blue);
+
+  & h3 {
+    color: white;
+    font-weight: bold;
+  }
+  & p {
+    color: white;
+  }
+}
+
+/* .project-expanded-content replaces make-xs-column(8) + make-xs-column-offset(2) */
+.project-expanded-content {
+  position: relative;
+  float: left;
+  width: 66.6666666667%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: 16.6666666667%;
+}
+
+/* .project-expanded-content-wide replaces make-xs-column(10) + make-xs-column-offset(1) */
+.project-expanded-content-wide {
+  position: relative;
+  float: left;
+  width: 83.3333333333%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: 8.3333333333%;
+  text-align: center;
+}
+
+.project-expanded-text-only {
+  padding-top: 0px;
+  padding-bottom: 25px;
+  line-height: 160%;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/* ==========================================================================
+   Contact
+   ========================================================================== */
+
+.section-contact {
+  position: relative;
+  z-index: var(--z1);
+  padding: 90px 0;
+  background-color: var(--color-bright-red);
+  color: var(--color-dark-blue);
+  overflow: hidden;
+}
+
+/* .contact-inner-container gets the same Bootstrap .container behavior as
+   .intro-inner-container (width steps 750/970/1170 at 768/992/1200), plus
+   its own max-width:1200px from 480px up — which never actually clamps
+   anything, since the container's own widest step (1170px) is already
+   below 1200px. Included for fidelity even though it's a no-op. */
+.contact-inner-container {
+  position: relative;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  &::before,
+  &::after {
+    content: " ";
+    display: table;
+  }
+
+  &::after {
+    clear: both;
+  }
+
+  & p {
+    position: relative;
+    padding-top: 20px;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 160%;
+    text-align: left;
+  }
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  .contact-inner-container {
+    width: 750px;
+  }
+}
+
+@media (min-width: 992px) { /* was $screen-md-min */
+  .contact-inner-container {
+    width: 970px;
+  }
+}
+
+@media (min-width: 1200px) { /* was $screen-lg-min */
+  .contact-inner-container {
+    width: 1170px;
+  }
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .contact-inner-container {
+    max-width: 1200px;
+    text-align: left;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .contact-inner-container p {
+    font-size: 16px;
+  }
+  .contact-form-wrapper {
+    text-align: center;
+  }
+}
+
+.contact-social-icons {
+  display: table;
+  width: 100%;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+
+  & a[role="social"] {
+    display: table-cell;
+  }
+}
+
+img.img-contact {
+  padding-bottom: 30px;
+  width: 100%;
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.contact-copy {
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.svg-icon {
+  width: 40%;
+  fill: var(--color-dark-blue);
+}
+
+.svg-icon:hover {
+  fill: var(--color-tan);
+}
+
+.contact-form-title {
+  padding-top: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 34px;
+  font-weight: bold;
+  line-height: 1.3em;
+}
+
+.contact-form-subtitle {
+  padding-top: 0px;
+  margin-top: 0px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.contact-form-wrapper {
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
+}
+
+/* Intentionally omitted from this port, all confirmed dead:
+   - `.contact-info`, `#contactSpinner`, `#contactSpinnerParent` (+ its
+     `:hover`) — the email/phone list and spinner graphic these styled were
+     already removed from the markup (see the committed contact-info removal
+     that index.njk was ported from).
+   - `@keyframes spin` / `@keyframes backspin` — only ever referenced by the
+     two spinner rules above, so they go with them.
+   - `.declaration-order` — never a real style; it was a CSS-property-order
+     style guide crib note left at the top of main.scss, matching no markup.
+   If the spinner is ever reinstated, all of the above are recoverable from
+   git history (app/styles/main.scss). */
+
+/* ==========================================================================
+   Row / col-sm-6 (used by the Contact section's two-column layout)
+   ========================================================================== */
+
+.row {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.row::before,
+.row::after {
+  content: " ";
+  display: table;
+}
+
+.row::after {
+  clear: both;
+}
+
+.col-sm-6 {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  .col-sm-6 {
+    float: left;
+    width: 50%;
+  }
+}
+
+/* ==========================================================================
+   Form
+   ========================================================================== */
+
+#form-div {
+  position: relative;
+}
+
+.feedback-input {
+  color: var(--color-dark-blue);
+  border: none;
+  background-color: var(--color-dark-red);
+  padding: 15px 13px 15px 13px;
+  margin-bottom: 30px;
+  width: 100%;
+  box-shadow: inset 0px 2px 4px 0px rgba(0,0,0,0.26);
+}
+
+.feedback-input:focus {
+  background: var(--color-tan);
+  /* `box-shadow: 0` is invalid CSS — copied verbatim from main.scss on
+     purpose. Browsers discard the declaration, so the focused input keeps
+     the inset shadow inherited from .feedback-input above. "Correcting"
+     this to `none` would remove that shadow on focus, i.e. it would be a
+     real visual change, not a cleanup. Leave it alone. */
+  box-shadow: 0;
+  border: none;
+  color: var(--color-dark-blue);
+  outline: none;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  line-height: 150%;
+  resize: vertical;
+}
+
+input:hover, textarea:hover,
+input:focus, textarea:focus {
+  background-color: var(--color-tan);
+}
+
+::-webkit-input-placeholder {
+  color: var(--color-bright-red);
+  font-weight: bold;
+}
+
+::-moz-placeholder {
+  color: var(--color-bright-red);
+  font-weight: bold;
+}
+
+:-ms-input-placeholder {
+  color: var(--color-bright-red);
+  font-weight: bold;
+}
+
+#button-submit {
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  background-color: var(--color-dark-blue);
+  color: white;
+  font-size: 18px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  box-shadow: var(--shadow-button);
+}
+
+#form-messages {
+  margin-top: 20px;
+}
+
+#button-submit:hover {
+  color: var(--color-dark-blue);
+  background-color: var(--color-tan);
+}
+
+#button-submit:active {
+  background-color: var(--color-bright-red);
+}
+
+/* ==========================================================================
+   State
+   ========================================================================== */
+
+.mob-verticalAdjust {
+  position: relative;
+  top: 50%;
+  transform: translateY(25%);
+}
+
+.mob-verticalAdjustCenter {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
