@@ -3,7 +3,9 @@ Framework: none (was Bootstrap-sass; replaced by hand-written native CSS)
 Code Style: http://codeguide.co/#css
 */
 
-@import url(https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700);
+/* Fonts are loaded via <link> in layouts/base.njk, not @import. An @import
+   here is render-blocking and cannot start downloading until this stylesheet
+   itself has parsed, which serialises two round-trips before any text paints. */
 
 /* ==========================================================================
    Variables
@@ -25,7 +27,15 @@ Code Style: http://codeguide.co/#css
   --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
   --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
 
-  --font-main: 'Montserrat', 'Century Gothic', Verdana, Arial, sans-serif;
+  /* Two roles. Display is the serif voice — project titles, case-study
+     section headings, and the contact block's name. Body is everything
+     else, including all UI: nav, buttons, form fields, subtitles and the
+     client/date meta. Serifs read poorly as interface labels, so UI stays
+     sans deliberately.
+     To try a serif for long-form reading later, point the body copy
+     selectors at a separate --font-reading rather than changing this. */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 
   --z1: 100;
   --z2: 200;
@@ -51,8 +61,8 @@ Code Style: http://codeguide.co/#css
      detail pages, which set colors but not sizes or spacing.
    - `p { margin: 0 0 10px }` spaces all body copy.
    - `button, input, textarea { font: inherit }` is what makes the form
-     controls and the nav/close buttons use Montserrat instead of the
-     browser default form font.
+     controls and the nav/close buttons pick up the body font instead of
+     the browser's default form font.
    ========================================================================== */
 
 *,
@@ -76,7 +86,7 @@ body {
   background-color: #fff;
   padding-top: 0px;
   padding-bottom: 0;
-  font-family: var(--font-main);
+  font-family: var(--font-body);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -816,7 +826,11 @@ img.about-headshot {
   padding-left: 15px;
   padding-right: 15px;
   font-size: 20px;
-  font-weight: bold;
+  /* Fraunces is drawn heavier than Montserrat at the same nominal weight,
+     so `bold` here would look overbearing over the banner photos. 600 is
+     the visual match. */
+  font-family: var(--font-display);
+  font-weight: 600;
   letter-spacing: -0.004em;
   color: #fff;
 }
@@ -941,6 +955,15 @@ img.about-headshot {
   & h3, & h4, & h5, & h6 {
     text-align: center;
   }
+
+  /* Only h3 is a section heading ("UI Development", "User Research and
+     Personas") and takes the display serif. h4 is a descriptive deck and
+     h5/h6 are client/date meta — those stay sans, which also gives the
+     serif heading something to contrast against. */
+  & h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
 }
 
 .project-expanded-section {
@@ -1042,6 +1065,15 @@ img.about-headshot {
   & p {
     color: white;
   }
+}
+
+/* Each .project-section-* rule above sets `font-weight: bold` on its h3 for
+   the old sans. Those land after the display-font rule and have equal
+   specificity, so they win — which asks the browser for Fraunces 700 when
+   only 600 is loaded, and it answers by synthesising a faux bold that
+   smears the serif. Pin the display weight back here, after them. */
+.project-expanded-section h3 {
+  font-weight: 600;
 }
 
 /* .project-expanded-content replaces make-xs-column(8) + make-xs-column-offset(2) */
@@ -1179,7 +1211,8 @@ img.img-contact {
   margin-top: 0px;
   margin-bottom: 0px;
   font-size: 34px;
-  font-weight: bold;
+  font-family: var(--font-display);
+  font-weight: 600;
   line-height: 1.3em;
 }
 
