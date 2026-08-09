@@ -561,3 +561,356 @@ picture {
    bottom margin on its list items) — omitted here. `.nav-collapse`, without
    the "navbar-" prefix, matches nothing in the markup and is referenced by
    no selector in any script; it was already dead CSS in the live site. */
+
+/* ==========================================================================
+   About
+   ========================================================================== */
+
+.section-about {
+  position: relative;
+  z-index: var(--z2);
+  padding-top: 90px;
+  padding-right: 20%;
+  padding-left: 20%;
+  padding-bottom: 90px;
+  background-color: var(--color-tan);
+  color: var(--color-dark-blue);
+  overflow: hidden;
+}
+
+.about-inner-container {
+  position: relative;
+  text-align: center;
+
+  & img.img-about {
+    width: 80%;
+
+    @media (min-width: 480px) { /* was $screen-xs-min */
+      width: 60%;
+    }
+  }
+
+  & p {
+    padding-top: 30px;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 160%;
+    text-align: left;
+
+    @media (min-width: 480px) { /* was $screen-xs-min */
+      font-size: 16px;
+    }
+  }
+}
+
+img.about-headshot {
+  display: none;
+}
+
+.content-row {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.content-row::before,
+.content-row::after {
+  content: " ";
+  display: table;
+}
+
+.content-row::after {
+  clear: both;
+}
+
+/* .text-holder-offset replaces Bootstrap's
+   make-sm-column(5) + make-md-column(4) + make-sm-column-offset(3) */
+.text-holder-offset {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  z-index: var(--z1);
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  .text-holder-offset {
+    float: left;
+    width: 41.6666666667%;
+    margin-left: 25%;
+  }
+}
+
+@media (min-width: 992px) { /* was $screen-md-min */
+  .text-holder-offset {
+    width: 33.3333333333%;
+  }
+}
+
+/* .img-holder-4 replaces make-sm-column(4) */
+.img-holder-4 {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 60px;
+  margin-top: -70px;
+  margin-bottom: 70px;
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  .img-holder-4 {
+    float: left;
+    width: 33.3333333333%;
+  }
+}
+
+.svg-container-about {
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+.svg-container-about::before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em; /* Adjusts for spacing */
+}
+
+.head-spin-about {
+  display: none;
+  height: 100%;
+  width: 99%;
+  top: 0;
+  left: 0;
+  vertical-align: middle;
+  overflow: visible !important;
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min — NOT screen-md-min, verify against source line 432 if in doubt */
+  .svg-container-about,
+  .head-spin-about {
+    display: inline-block;
+  }
+  .section-about {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  .about-inner-container {
+    max-width: var(--max-width);
+    margin: auto;
+    text-align: left;
+  }
+  .about-inner-container img.img-about {
+    width: 40%;
+    max-width: 400px;
+    margin-left: 6%;
+  }
+  .about-inner-container img.about-headshot {
+    position: relative;
+    display: inline-block;
+  }
+  .text-holder-offset {
+    margin-top: -90px;
+  }
+}
+
+/* ==========================================================================
+   Work
+   ========================================================================== */
+
+.section-work {
+  position: relative;
+  z-index: var(--z2);
+  padding-top: 90px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+  background-color: white;
+  color: var(--color-dark-blue);
+  overflow: hidden;
+}
+
+/* .work-inner-container: deliberately full-width (not the Bootstrap
+   .container behavior .intro-inner-container/.contact-inner-container get)
+   — see the design spec's CSS section for why this was made explicit
+   rather than left to an @extend that silently didn't apply at some
+   breakpoints under the old Sass engine. That was a real bug, fixed
+   earlier in this project's history. */
+.work-inner-container {
+  position: relative;
+  width: 100%;
+  padding-right: 0px;
+  padding-left: 0px;
+  min-height: 1200px;
+}
+
+.img-work {
+  width: 60%;
+  padding-bottom: 90px;
+  max-width: 400px;
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .img-work {
+    width: 40%;
+  }
+}
+
+/* NOTE: this @media rule is dead code, preserved intentionally for parity
+   with the current live site. In the compiled Sass output, this rule
+   emits BEFORE the unconditional `height: 406px` below (Dart Sass hoists
+   a nested @media to where it was declared inside the rule, which here
+   was first), so the unconditional rule always wins, at every viewport.
+   Confirmed against .tmp/styles/main.css during planning. Worth revisiting
+   as a follow-up, but changing it now would be a visual regression
+   relative to what's live today, not a fix. */
+@media (max-width: 768px) {
+  .project-banner {
+    height: 250px;
+  }
+}
+
+.project-banner {
+  height: 406px;
+  text-align: center;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.is_stuck {
+  z-index: var(--z4);
+}
+
+.project-return {
+  height: 0;
+  overflow: hidden;
+}
+
+.project-hillrom { background-image: url(/images/banner-mobile-hillrom.jpg); }
+.project-ssa { background-image: url(/images/banner-mobile-ssa.jpg); }
+.project-artistprofile { background-image: url(/images/banner-mobile-artistprofile.jpg); }
+.project-hta { background-image: url(/images/banner-mobile-hta.jpg); }
+
+.project-title {
+  position: relative;
+  margin-bottom: 0px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: -0.004em;
+  color: #fff;
+}
+
+.project-subtitle {
+  position: relative;
+  margin-top: 7px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 13px;
+  font-weight: normal;
+  letter-spacing: -0.004em;
+  color: #fff;
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .project-title {
+    font-size: 24px;
+  }
+  .project-subtitle {
+    font-size: 14px;
+  }
+}
+
+.btn-project-explode,
+.btn-project-close {
+  display: inline-block;
+  position: relative;
+  height: 100px;
+  width: 100px;
+  z-index: var(--z4);
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.btn-project-text {
+  position: absolute;
+  left: 38%;
+  top: 27%;
+  font-size: 30px;
+}
+
+.btn-project-more,
+.btn-project-next {
+  height: 50px;
+  width: 50px;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  border-radius: 50%;
+  border: none;
+  z-index: var(--z5);
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-button);
+  color: var(--color-dark-blue);
+  cursor: pointer;
+}
+
+.btn-project-next {
+  margin-bottom: 40px;
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .btn-project-text {
+    left: 40%;
+    top: 29%;
+  }
+  .btn-project-more {
+    font-size: 18px;
+  }
+}
+
+.btn-project-close {
+  position: fixed;
+  top: -50px;
+}
+
+/* NOTE: also dead code, preserved for the same reason as the
+   .project-banner rule above — the @media (min-width: 480px) rule further
+   down always wins at any viewport where this one would apply too, since
+   it comes later in the compiled cascade. Confirmed against
+   .tmp/styles/main.css during planning. */
+@media (min-width: 768px) {
+  .btn-project-close {
+    top: -100px;
+  }
+}
+
+.btn-project-close {
+  right: 25px;
+  color: var(--color-dark-blue);
+  background-color: transparent;
+  border: none;
+  z-index: var(--z2);
+  transform: rotate(45deg);
+  outline: none;
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .btn-project-close {
+    top: 15px;
+  }
+}
+
+.btn-project-off {
+  display: none;
+}
