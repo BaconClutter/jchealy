@@ -758,7 +758,31 @@ grep -L "vendor/jquery.js" _site/project*.html
 ```
 Expected: all four filenames listed (i.e. none of them contain the layout's script tags).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Assert every project's `id` resolves to a real detail page**
+
+This is the one failure mode in this task that produces **no build error and no visible symptom until someone clicks a banner**. `main.js` does `.load(clickedId + '.html #' + clickedId + 'Inner')`, deriving both the URL and the fragment id from the banner's DOM `id`, which comes from `projects.json`. So each `projects.json` `id` must match a permalink here *and* the `id` on the `<div class="project-expanded">` inside that page. Nothing enforces this — the strings are maintained independently. Check it mechanically:
+
+```bash
+node -e '
+const fs = require("fs");
+const projects = JSON.parse(fs.readFileSync("src/_data/projects.json", "utf8"));
+let bad = 0;
+for (const p of projects) {
+  const page = `_site/${p.id}.html`;
+  if (!fs.existsSync(page)) { console.error(`MISSING PAGE: ${page} (for id "${p.id}")`); bad++; continue; }
+  const html = fs.readFileSync(page, "utf8");
+  if (!html.includes(`id="${p.id}Inner"`)) {
+    console.error(`MISSING FRAGMENT: ${page} has no element with id="${p.id}Inner"`);
+    bad++;
+  }
+}
+console.log(bad === 0 ? `OK: all ${projects.length} projects resolve to a page and fragment` : `${bad} problem(s)`);
+process.exit(bad === 0 ? 0 : 1);
+'
+```
+Expected: `OK: all 4 projects resolve to a page and fragment`, exit 0.
+
+- [ ] **Step 6: Commit**
 
 ```bash
 git add -A
