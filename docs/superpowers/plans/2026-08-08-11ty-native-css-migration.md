@@ -1842,8 +1842,15 @@ EOF
 }
 
 .project-expanded-section {
-  margin-left: -15px;
-  margin-right: -15px;
+  /* Base margins are 0, NOT -15px. main.scss applies Bootstrap's make-row
+     mixin (which sets -15px) and then explicitly resets both to 0 in the
+     same rule, so 0 is what actually renders; the -15px only returns at
+     >=480px via the media query at the end of this block. Verified against
+     both the compiled reference and the live production stylesheet — an
+     earlier draft of this plan had the base value as -15px, which rendered
+     the project detail content 15px wider than production below 480px. */
+  margin-left: 0;
+  margin-right: 0;
   padding-top: 60px;
   padding-bottom: 60px;
 
