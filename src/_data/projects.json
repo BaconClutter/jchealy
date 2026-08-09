@@ -1,0 +1,26 @@
+[
+  {
+    "id": "projectArtistProfile",
+    "bannerClass": "project-artistprofile",
+    "title": "ReverbNation Artist Profile",
+    "subtitle": "Musician Homepage"
+  },
+  {
+    "id": "projectHillRom",
+    "bannerClass": "project-hillrom",
+    "title": "Hill-Rom Caregiver Intelligence Suite",
+    "subtitle": "Multi-platform patient and medical device status application"
+  },
+  {
+    "id": "projectSSA",
+    "bannerClass": "project-ssa",
+    "title": "TowerCo Geospatial Support",
+    "subtitle": "GIS Web Application"
+  },
+  {
+    "id": "projectHTA",
+    "bannerClass": "project-hta",
+    "title": "Helios Towers Africa",
+    "subtitle": "Responsive Web Application"
+  }
+]
