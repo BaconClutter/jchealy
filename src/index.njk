@@ -25,7 +25,7 @@ title: John C. Healy - UX, UI, and Interaction Design
     </div>
     <h4 class="intro-title">UX, UI &amp; INTERACTION DESIGN</h4>
     <div class="intro-inner-container" id="introInnerContainer">
-      <img class="img-responsive" id="introImg" src="/images/johnhealy-m.png" alt="John Healy typographic banner text" />
+      {% image "johnhealy-m.png", "John Healy typographic banner text", "img-responsive", "introImg" %}
     </div>
     <nav class="navbar">
       <div id="navbar-NoCollapse" class="">
@@ -40,7 +40,7 @@ title: John C. Healy - UX, UI, and Interaction Design
 
   <div class="section-about" id="About">
     <div class="about-inner-container">
-      <img class="img-responsive img-about" src="/images/about.png" />
+      {% image "about.png", "", "img-responsive img-about" %}
 
       <div class="content-row">
         <div class="text-holder-offset">
@@ -51,7 +51,7 @@ title: John C. Healy - UX, UI, and Interaction Design
           <div class="svg-container-about" id="svgContainerAbout">
             <svg id="svgContentAbout" version="1.1" viewBox="170 125 350 350" preserveAspectRatio="xMidYMid slice" class="head-spin-about"></svg>
           </div>
-          <img class="img-responsive about-headshot" src="/images/about-headshot.png" alt="John Healy headshot"/>
+          {% image "about-headshot.png", "John Healy headshot", "img-responsive about-headshot" %}
         </div>
       </div>
     </div>
@@ -59,7 +59,7 @@ title: John C. Healy - UX, UI, and Interaction Design
 
   <div class="section-work" id="Work">
     <div class="work-inner-container">
-      <img class="img-work center-block" src="/images/work.png" />
+      {% image "work.png", "", "img-work center-block" %}
 
       {% for project in projects %}
       <div class="project-banner {{ project.bannerClass }}" id="{{ project.id }}">
@@ -89,7 +89,7 @@ title: John C. Healy - UX, UI, and Interaction Design
 
       <div class="row">
         <div class="col-sm-6">
-          <img class="img-responsive img-contact" src="/images/contact.png" />
+          {% image "contact.png", "", "img-responsive img-contact" %}
           <div class="contact-copy">
             <p>If you have a project that needs some fresh eyes, or problems that need solving, then I can help with UX, UI, Interaction and Visual Design. I also do Branding, Design Systems, Animation and Front End Development.</p>
             <p>If you want help from someone who cares about meticulous craftsmanship with a purpose, then I'd be pleased to hear from you. I’m available for freelance projects and consulting.</p>
