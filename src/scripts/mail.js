@@ -25,10 +25,13 @@ $('#contactForm').submit(function() {
 		// Make sure that the formMessages div has the 'error' class.
 		$formMessages.removeClass('success');
 		$formMessages.addClass('error');
-		if(data.responseText !== '') {
-			$formMessages.text(data.responseText);
-		} else {
-			$formMessages.text('Something has gone terribly awry. Sorry about that.');
+		// Never render the response body. The old sender.php returned a short
+		// human-readable string, but Netlify returns a full HTML error page —
+		// dumping that here fills the page with raw markup. Show a fixed
+		// message and keep the detail in the console for debugging.
+		$formMessages.text('Something has gone terribly awry. Sorry about that. You can also reach me at yo@jchealy.com.');
+		if (window.console && console.error) {
+			console.error('Contact form submission failed:', data.status, data.statusText);
 		}
 	});
 });
