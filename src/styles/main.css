@@ -14,15 +14,55 @@ Code Style: http://codeguide.co/#css
 :root {
   --max-width: 1200px;
 
-  --color-dark-blue: #0D1316;
-  --color-light-blue: #043963;
-  --color-tan: #FAE7C9;
-  --color-white: #fff;
-  --color-bright-red: #DC4601;
-  --color-dark-red: #B23800;
-  --color-light-gray: #EDEDED;
-  --color-dark-gray: #9B9B9B;
-  --color-darker-gray: #4A4A4A;
+  /* ------------------------------------------------------------------
+     COLOR — single source of truth for the whole site.
+
+     Names describe ROLE, not hue, so they stay honest when the scheme
+     changes: a variable called --color-accent can hold anything, while
+     one called --color-bright-red becomes a lie the moment it's green.
+
+     The animated SVG backdrops read these same values at runtime (see
+     src/scripts/custom-svg.js), so there is nothing to keep in sync by
+     hand. Change a value here and the entire site follows, canvas
+     graphics included.
+
+     To try a whole scheme, see the [data-theme] blocks below.
+     ------------------------------------------------------------------ */
+
+  /* Surfaces */
+  --color-surface:        #fff;      /* default page background          */
+  --color-surface-warm:   #FAE7C9;   /* About section                    */
+  --color-surface-muted:  #EDEDED;   /* light project-detail band        */
+  --color-surface-dark:   #4A4A4A;   /* dark project-detail band         */
+
+  /* Ink — dark text, and the dark surfaces that invert it */
+  --color-ink:            #0D1316;   /* headline text, header/footer bg  */
+  --color-text-base:      #333333;   /* body default                     */
+  --color-text-muted:     #9B9B9B;   /* client/date meta                 */
+
+  /* Text sitting ON a dark surface or a banner photo. Deliberately NOT
+     the same token as --color-surface, even though both are white today:
+     in a dark scheme the page surface goes dark while this must stay
+     light, so collapsing them would break one or the other. */
+  --color-text-inverse:   #fff;
+
+  /* Accent */
+  --color-accent:         #DC4601;   /* Contact section, links, headings */
+  --color-accent-deep:    #B23800;   /* form field backgrounds           */
+  --color-accent-cool:    #043963;   /* the one cool project band        */
+
+  /* Generic anchor colour, inherited from Bootstrap. Near-inert in
+     practice — nav links, social icons and buttons all set their own
+     colour — but kept in the palette so no colour lives outside it. */
+  --color-link:           #428bca;
+  --color-link-hover:     #2a6496;
+
+  /* Decorative backdrops — the animated rings drawn by Snap.svg.
+     Previously hardcoded inside custom-svg.js, invisible to CSS. */
+  --color-backdrop-1:     #091928;   /* header ring, innermost           */
+  --color-backdrop-2:     #0c2033;   /* header ring, middle              */
+  --color-backdrop-3:     #0d273e;   /* header ring, outermost           */
+  --color-backdrop-warm:  #f8daaa;   /* About ring                       */
 
   --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
   --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
@@ -42,6 +82,88 @@ Code Style: http://codeguide.co/#css
   --z3: 300;
   --z4: 400;
   --z5: 500;
+}
+
+/* ==========================================================================
+   Alternate schemes — for trying color directions
+
+   Each block re-points the SAME role tokens, so everything follows at
+   once: sections, type, buttons, form fields, and the animated SVG
+   backdrops (those read these values at runtime).
+
+   To try one:
+     • add ?theme=dusk to any URL, or
+     • in the console: document.documentElement.dataset.theme = 'dusk'
+     • back to default: delete document.documentElement.dataset.theme
+
+   Nothing here is wired into the shipped design — the default :root
+   palette above is what renders unless a theme is explicitly asked for.
+   ========================================================================== */
+
+/* Warmer and earthier. Espresso instead of navy, sand instead of cream,
+   a burnt orange that sits closer to terracotta than the current red. */
+:root[data-theme="ember"] {
+  --color-surface:        #FFFCF8;
+  --color-surface-warm:   #EFDFC8;
+  --color-surface-muted:  #EDE7E0;
+  --color-surface-dark:   #4A423B;
+
+  --color-ink:            #1A1512;
+  --color-text-base:      #2C2622;
+  --color-text-muted:     #9C918A;
+
+  --color-accent:         #C2410C;
+  --color-accent-deep:    #9A3412;
+  --color-accent-cool:    #3F4A2E;
+
+  --color-backdrop-1:     #16110E;
+  --color-backdrop-2:     #211913;
+  --color-backdrop-3:     #2C211A;
+  --color-backdrop-warm:  #E4CBA4;
+}
+
+/* Cooler and quieter. Deep slate base, pale blue-gray surfaces, and a
+   muted amber accent so the Contact block reads warm without shouting. */
+:root[data-theme="dusk"] {
+  --color-surface:        #FDFDFD;
+  --color-surface-warm:   #DCE4E8;
+  --color-surface-muted:  #E9EDEF;
+  --color-surface-dark:   #3D474D;
+
+  --color-ink:            #0E1418;
+  --color-text-base:      #29323A;
+  --color-text-muted:     #8B959C;
+
+  --color-accent:         #C2610C;
+  --color-accent-deep:    #96490A;
+  --color-accent-cool:    #12414F;
+
+  --color-backdrop-1:     #0B1418;
+  --color-backdrop-2:     #101E26;
+  --color-backdrop-3:     #152833;
+  --color-backdrop-warm:  #CFE0E6;
+}
+
+/* Most restrained. Near-monochrome with a single saturated accent —
+   the design decisions carry the page rather than the palette. */
+:root[data-theme="quiet"] {
+  --color-surface:        #FFFFFF;
+  --color-surface-warm:   #F2F0EC;
+  --color-surface-muted:  #F0F0F0;
+  --color-surface-dark:   #3A3A3A;
+
+  --color-ink:            #111111;
+  --color-text-base:      #2E2E2E;
+  --color-text-muted:     #9A9A9A;
+
+  --color-accent:         #B23A2F;
+  --color-accent-deep:    #8C2C23;
+  --color-accent-cool:    #2E2E2E;
+
+  --color-backdrop-1:     #0E0E0E;
+  --color-backdrop-2:     #171717;
+  --color-backdrop-3:     #202020;
+  --color-backdrop-warm:  #E2DFD8;
 }
 
 /* ==========================================================================
@@ -82,8 +204,8 @@ body {
   margin: 0;
   font-size: 14px;
   line-height: 1.428571429;
-  color: #333333;
-  background-color: #fff;
+  color: var(--color-text-base);
+  background-color: var(--color-surface);
   padding-top: 0px;
   padding-bottom: 0;
   font-family: var(--font-body);
@@ -119,13 +241,13 @@ p {
 
 a {
   background: transparent;
-  color: #428bca;
+  color: var(--color-link);
   text-decoration: none;
 }
 
 a:hover,
 a:focus {
-  color: #2a6496;
+  color: var(--color-link-hover);
   text-decoration: underline;
 }
 
@@ -194,6 +316,8 @@ picture {
   display: contents;
 }
 
+/* Legacy IE<10 upgrade notice. Deliberately left outside the palette —
+   it renders only on browsers that predate CSS custom properties. */
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -250,8 +374,8 @@ picture {
   height: 100vh;
   z-index: var(--z1);
   text-align: center;
-  color: var(--color-white);
-  background-color: var(--color-dark-blue);
+  color: var(--color-surface);
+  background-color: var(--color-ink);
   font-weight: bold;
 }
 
@@ -416,17 +540,17 @@ picture {
 .nav > li > a:visited,
 .nav > li > a:focus {
   background-color: transparent;
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 .nav > li > a:hover {
   background-color: transparent;
-  color: var(--color-bright-red);
+  color: var(--color-accent);
 }
 
 .nav > li > a:active {
   background-color: transparent;
-  color: var(--color-dark-blue);
+  color: var(--color-ink);
 }
 
 .navbar {
@@ -473,7 +597,7 @@ picture {
     padding-bottom: 10px;
     line-height: 20px;
     display: inline-block;
-    color: var(--color-white);
+    color: var(--color-surface);
 
     /* Bootstrap bumps this to 15px at desktop and nothing in main.scss
        overrides it, so production's desktop nav links are 10px taller than
@@ -501,7 +625,7 @@ picture {
   padding: 13px;
   margin: 0 30px 30px 0;
   border-radius: 50%;
-  background-color: #fff;
+  background-color: var(--color-surface);
   border: 1px solid transparent;
   box-shadow: var(--shadow-button);
   z-index: var(--z5);
@@ -511,7 +635,7 @@ picture {
   }
 
   &:active {
-    background-color: var(--color-bright-red);
+    background-color: var(--color-accent);
     box-shadow: var(--shadow-button-active);
   }
 
@@ -533,7 +657,7 @@ picture {
   }
 
   & span {
-    background-color: var(--color-dark-blue);
+    background-color: var(--color-ink);
   }
 }
 
@@ -560,7 +684,7 @@ picture {
     left: 0px;
     bottom: 0px;
     right: 0px;
-    background-color: var(--color-white);
+    background-color: var(--color-surface);
     z-index: var(--z4);
 
     & ul {
@@ -573,7 +697,7 @@ picture {
 
         & a {
           display: block;
-          color: var(--color-dark-blue);
+          color: var(--color-ink);
           font-size: 22px;
           font-weight: bold;
         }
@@ -598,8 +722,8 @@ picture {
   padding-right: 20%;
   padding-left: 20%;
   padding-bottom: 90px;
-  background-color: var(--color-tan);
-  color: var(--color-dark-blue);
+  background-color: var(--color-surface-warm);
+  color: var(--color-ink);
   overflow: hidden;
 }
 
@@ -754,8 +878,8 @@ img.about-headshot {
   padding-bottom: 0px;
   padding-right: 0px;
   padding-left: 0px;
-  background-color: white;
-  color: var(--color-dark-blue);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
   overflow: hidden;
 }
 
@@ -832,7 +956,7 @@ img.about-headshot {
   font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.004em;
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 .project-subtitle {
@@ -843,7 +967,7 @@ img.about-headshot {
   font-size: 13px;
   font-weight: normal;
   letter-spacing: -0.004em;
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 @media (min-width: 480px) { /* was $screen-xs-min */
@@ -880,7 +1004,7 @@ img.about-headshot {
   width: 50px;
   margin: 0;
   padding: 0;
-  background-color: #fff;
+  background-color: var(--color-surface);
   border-radius: 50%;
   border: none;
   z-index: var(--z5);
@@ -888,7 +1012,7 @@ img.about-headshot {
   font-weight: bold;
   text-transform: uppercase;
   box-shadow: var(--shadow-button);
-  color: var(--color-dark-blue);
+  color: var(--color-ink);
   cursor: pointer;
 }
 
@@ -924,7 +1048,7 @@ img.about-headshot {
 
 .btn-project-close {
   right: 25px;
-  color: var(--color-dark-blue);
+  color: var(--color-ink);
   background-color: transparent;
   border: none;
   z-index: var(--z2);
@@ -1004,66 +1128,70 @@ img.about-headshot {
 }
 
 .project-section-white {
-  background-color: white;
+  background-color: var(--color-surface);
 
   & h3 {
-    color: var(--color-bright-red);
+    color: var(--color-accent);
     font-weight: bold;
   }
   & h4 {
-    color: black;
+    /* Was literal `black`. Every other dark text on the site is
+       --color-ink (#0D1316), so this was almost certainly an oversight
+       rather than a decision. Folding it in changes the rendered colour
+       by an imperceptible amount and keeps the palette complete. */
+    color: var(--color-ink);
   }
   & h5, & h6 {
-    color: var(--color-dark-gray);
+    color: var(--color-text-muted);
     font-weight: normal;
   }
   & p {
-    color: var(--color-dark-blue);
+    color: var(--color-ink);
   }
 }
 
 .project-section-gray {
-  background-color: var(--color-light-gray);
+  background-color: var(--color-surface-muted);
 
   & h3 {
-    color: var(--color-light-blue);
+    color: var(--color-accent-cool);
     font-weight: bold;
   }
 }
 
 .project-section-gray-dark {
-  background-color: var(--color-darker-gray);
+  background-color: var(--color-surface-dark);
 
   & h3 {
-    color: white;
+    color: var(--color-text-inverse);
     font-weight: bold;
   }
   & p {
-    color: white;
+    color: var(--color-text-inverse);
   }
 }
 
 .project-section-red {
-  background-color: var(--color-bright-red);
+  background-color: var(--color-accent);
 
   & h3 {
-    color: white;
+    color: var(--color-text-inverse);
     font-weight: bold;
   }
   & p {
-    color: white;
+    color: var(--color-text-inverse);
   }
 }
 
 .project-section-blue {
-  background-color: var(--color-light-blue);
+  background-color: var(--color-accent-cool);
 
   & h3 {
-    color: white;
+    color: var(--color-text-inverse);
     font-weight: bold;
   }
   & p {
-    color: white;
+    color: var(--color-text-inverse);
   }
 }
 
@@ -1115,8 +1243,8 @@ img.about-headshot {
   position: relative;
   z-index: var(--z1);
   padding: 90px 0;
-  background-color: var(--color-bright-red);
-  color: var(--color-dark-blue);
+  background-color: var(--color-accent);
+  color: var(--color-ink);
   overflow: hidden;
 }
 
@@ -1199,11 +1327,11 @@ img.img-contact {
 
 .svg-icon {
   width: 40%;
-  fill: var(--color-dark-blue);
+  fill: var(--color-ink);
 }
 
 .svg-icon:hover {
-  fill: var(--color-tan);
+  fill: var(--color-surface-warm);
 }
 
 .contact-form-title {
@@ -1283,9 +1411,9 @@ img.img-contact {
 }
 
 .feedback-input {
-  color: var(--color-dark-blue);
+  color: var(--color-ink);
   border: none;
-  background-color: var(--color-dark-red);
+  background-color: var(--color-accent-deep);
   padding: 15px 13px 15px 13px;
   margin-bottom: 30px;
   width: 100%;
@@ -1293,7 +1421,7 @@ img.img-contact {
 }
 
 .feedback-input:focus {
-  background: var(--color-tan);
+  background: var(--color-surface-warm);
   /* `box-shadow: 0` is invalid CSS — copied verbatim from main.scss on
      purpose. Browsers discard the declaration, so the focused input keeps
      the inset shadow inherited from .feedback-input above. "Correcting"
@@ -1301,7 +1429,7 @@ img.img-contact {
      real visual change, not a cleanup. Leave it alone. */
   box-shadow: 0;
   border: none;
-  color: var(--color-dark-blue);
+  color: var(--color-ink);
   outline: none;
 }
 
@@ -1314,21 +1442,21 @@ textarea {
 
 input:hover, textarea:hover,
 input:focus, textarea:focus {
-  background-color: var(--color-tan);
+  background-color: var(--color-surface-warm);
 }
 
 ::-webkit-input-placeholder {
-  color: var(--color-bright-red);
+  color: var(--color-accent);
   font-weight: bold;
 }
 
 ::-moz-placeholder {
-  color: var(--color-bright-red);
+  color: var(--color-accent);
   font-weight: bold;
 }
 
 :-ms-input-placeholder {
-  color: var(--color-bright-red);
+  color: var(--color-accent);
   font-weight: bold;
 }
 
@@ -1336,8 +1464,8 @@ input:focus, textarea:focus {
   width: 100%;
   border: none;
   cursor: pointer;
-  background-color: var(--color-dark-blue);
-  color: white;
+  background-color: var(--color-ink);
+  color: var(--color-text-inverse);
   font-size: 18px;
   padding-top: 15px;
   padding-bottom: 15px;
@@ -1349,12 +1477,12 @@ input:focus, textarea:focus {
 }
 
 #button-submit:hover {
-  color: var(--color-dark-blue);
-  background-color: var(--color-tan);
+  color: var(--color-ink);
+  background-color: var(--color-surface-warm);
 }
 
 #button-submit:active {
-  background-color: var(--color-bright-red);
+  background-color: var(--color-accent);
 }
 
 /* ==========================================================================

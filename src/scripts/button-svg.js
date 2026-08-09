@@ -9,6 +9,14 @@ $(function() {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
+	/* Colours come from the CSS palette in main.css — see the matching
+	   helper and rationale in custom-svg.js. Keeps these Snap.svg buttons
+	   in step with the rest of the site, including the [data-theme] blocks. */
+	var palette = window.getComputedStyle(document.documentElement);
+	function color(token, fallback) {
+		return palette.getPropertyValue('--color-' + token).trim() || fallback;
+	}
+
 	var $exploderButtons = $('.btn-project-explode'),
 	jitMin = 25,
 	jitMax = 85,
@@ -50,8 +58,8 @@ $(function() {
 
 		closeCircle = snapCloseArray[index].circle(cX, cY, r);
 		closeCircle.attr({
-			fill: 'rgba(255,255,255,1)',
-			stroke: '#fff',
+			fill: color('surface', '#fff'),
+			stroke: color('surface', '#fff'),
 			strokeWidth: 0,
 			'position': 'absolute'
 		});
@@ -75,7 +83,7 @@ $(function() {
 			curBtn.attr({
 				id: curId,
 				fill: 'rgba(0,0,0,0)',
-				stroke: '#fff',
+				stroke: color('surface', '#fff'),
 				strokeWidth: 0,
 				'stroke-dasharray': strokeDash,
 				'position': 'absolute',
@@ -98,16 +106,16 @@ $(function() {
 		var mainBtn = snapArray[index].circle(cX, cY, r);
 		mainBtn.attr({
 			id: 'mainBtnId'+index,
-			fill: 'rgba(255,255,255,1)',
-			stroke: '#fff',
+			fill: color('surface', '#fff'),
+			stroke: color('surface', '#fff'),
 			strokeWidth: 0,
 			'position': 'absolute'
 		});
 
 		var plusAttrs = {
 			id: 'plusRectId'+index,
-			fill: 'rgba(13,19,22,1)',
-			stroke: '#fff',
+			fill: color('ink', '#0D1316'),
+			stroke: color('surface', '#fff'),
 			strokeWidth: 0,
 			'position': 'absolute'
 		};

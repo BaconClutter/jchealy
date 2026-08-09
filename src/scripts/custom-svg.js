@@ -13,6 +13,20 @@ $(function() {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
+	/* Read a colour from the CSS palette in main.css rather than hardcoding
+	   it here. That stylesheet is the single source of truth for colour, so
+	   changing a value there updates these animated backdrops too — and the
+	   [data-theme] scheme blocks work on this canvas artwork just as they do
+	   on the rest of the page.
+
+	   Safe to call at this point: main.css is a <link> in <head> and this
+	   script runs at the end of <body>, so the cascade has already resolved.
+	   The fallback covers a missing or renamed token. */
+	var palette = window.getComputedStyle(document.documentElement);
+	function color(token, fallback) {
+		return palette.getPropertyValue('--color-' + token).trim() || fallback;
+	}
+
 	var s = Snap('#svgContent'),
 	a = Snap('#svgContentAbout'),
 	x = 300,
@@ -38,7 +52,7 @@ $(function() {
 
 	var headerSvgVals = {
 		circles: [s.circle(x, y, 70), s.circle(x, y, 130), s.circle(x, y, 200)],
-		colors: ['#091928', '#0c2033', '#0d273e'],
+		colors: [color('backdrop-1', '#091928'), color('backdrop-2', '#0c2033'), color('backdrop-3', '#0d273e')],
 		strokeWidths: [70, 90, 130],
 		dashes: buildDashArray(),
 		times: [125000, 75000, 105000]
@@ -65,7 +79,7 @@ $(function() {
 	aboutSvgVals.circles.forEach(function(element, index) {
 		element.attr({
 			fill: 'rgba(0,0,0,0)',
-			stroke: '#f8daaa',
+			stroke: color('backdrop-warm', '#f8daaa'),
 			strokeWidth: aboutSvgVals.strokeWidths[index],
 			'stroke-dasharray': aboutSvgVals.dashes[index]
 		});
