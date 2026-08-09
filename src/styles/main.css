@@ -1,0 +1,546 @@
+/*
+Framework: none (was Bootstrap-sass; replaced by hand-written native CSS)
+Code Style: http://codeguide.co/#css
+*/
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700);
+
+/* ==========================================================================
+   Variables
+   ========================================================================== */
+
+:root {
+  --max-width: 1200px;
+
+  --color-dark-blue: #0D1316;
+  --color-light-blue: #043963;
+  --color-tan: #FAE7C9;
+  --color-white: #fff;
+  --color-bright-red: #DC4601;
+  --color-dark-red: #B23800;
+  --color-light-gray: #EDEDED;
+  --color-dark-gray: #9B9B9B;
+  --color-darker-gray: #4A4A4A;
+
+  --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
+  --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
+
+  --font-main: 'Montserrat', 'Century Gothic', Verdana, Arial, sans-serif;
+
+  --z1: 100;
+  --z2: 200;
+  --z3: 300;
+  --z4: 400;
+  --z5: 500;
+}
+
+/* ==========================================================================
+   Base layer
+
+   This replaces the parts of Bootstrap's normalize + scaffolding + type
+   layers that the site actually depends on. Do not trim this section
+   thinking it's boilerplate — every rule here is load-bearing, verified
+   against docs/superpowers/reference/compiled-main.css:
+
+   - `box-sizing: border-box` is what makes every percentage-width column
+     in Tasks 9-10 line up, since they all also carry 15px side padding.
+     Without it the entire grid math is wrong.
+   - The body font-size/line-height/color are inherited by all copy.
+   - The heading margins/sizes are relied on by .project-title (h2),
+     .project-subtitle (h3), and every h3/h4/h5/h6 inside the project
+     detail pages, which set colors but not sizes or spacing.
+   - `p { margin: 0 0 10px }` spaces all body copy.
+   - `button, input, textarea { font: inherit }` is what makes the form
+     controls and the nav/close buttons use Montserrat instead of the
+     browser default form font.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+  font-size: 10px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #333333;
+  background-color: #fff;
+  padding-top: 0px;
+  padding-bottom: 0;
+  font-family: var(--font-main);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+h1, h2, h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+h4, h5, h6 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h1 { font-size: 36px; }
+h2 { font-size: 30px; }
+h3 { font-size: 24px; }
+h4 { font-size: 18px; }
+h5 { font-size: 14px; }
+h6 { font-size: 12px; }
+
+p {
+  margin: 0 0 10px;
+}
+
+a {
+  background: transparent;
+  color: #428bca;
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: #2a6496;
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+a:hover {
+  outline: 0;
+}
+
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+button {
+  overflow: visible;
+  text-transform: none;
+}
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+input {
+  line-height: normal;
+}
+
+textarea {
+  overflow: auto;
+}
+
+/* eleventy-img (Task 11) emits <picture><img …></picture> when it outputs
+   more than one format. `display: contents` removes the <picture> box from
+   layout so the inner <img> participates in its parent's layout directly —
+   without this, `.center-block`'s `display:block; margin:auto` centering
+   breaks, because the inline <picture> wrapper would be what's laid out. */
+picture {
+  display: contents;
+}
+
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+.container-fluid {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.container-fluid::before,
+.container-fluid::after {
+  content: " ";
+  display: table;
+}
+
+.container-fluid::after {
+  clear: both;
+}
+
+.img-responsive {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ==========================================================================
+   Header / intro
+   ========================================================================== */
+
+.header {
+  position: relative;
+  height: 100vh;
+  z-index: var(--z1);
+  text-align: center;
+  color: var(--color-white);
+  background-color: var(--color-dark-blue);
+  font-weight: bold;
+}
+
+.intro-title {
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 30px;
+  font-size: 14px;
+  z-index: var(--z1);
+  padding-left: 25%;
+  padding-right: 25%;
+  line-height: 140%;
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .intro-title {
+    font-size: 16px;
+    padding-top: 40px;
+    padding-left: 0;
+    padding-right: 0;
+    line-height: 100%;
+  }
+}
+
+.svg-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.svg-container::before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em; /* Adjusts for spacing */
+}
+
+.head-spin {
+  height: 100%;
+  width: 99%;
+  top: 0;
+  left: 0;
+  vertical-align: middle;
+}
+
+/* .intro-inner-container previously got Bootstrap's .container behavior via
+   Sass @extend: centered (margin auto), a width that steps
+   750px -> 970px -> 1170px at the 768/992/1200 breakpoints, further capped
+   at 1024px by its own max-width rule from 768px up (so it actually renders
+   at 750px, 970px, then 1024px — never the full 1170px). Written out
+   explicitly since native CSS has no @extend equivalent. */
+.intro-inner-container {
+  position: relative;
+  height: 100%;
+  z-index: var(--z2);
+  margin-top: -40px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.intro-inner-container::before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em; /* Adjusts for spacing */
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .intro-inner-container {
+    margin-top: -20px;
+  }
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  .intro-inner-container {
+    width: 750px;
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 992px) { /* was $screen-md-min */
+  .intro-inner-container {
+    width: 970px;
+  }
+}
+
+@media (min-width: 1200px) { /* was $screen-lg-min */
+  .intro-inner-container {
+    width: 1170px;
+  }
+}
+
+#introImg {
+  display: inline-block;
+  vertical-align: middle;
+  width: 60%;
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  #introImg {
+    width: auto;
+  }
+}
+
+/* ==========================================================================
+   Nav / collapse — the Bootstrap-derived rules that vendor/bootstrap/
+   collapse.js needs to function (toggling the .in class), plus the site's
+   own overrides. This is a small, deliberate slice of Bootstrap's navbar
+   component, not the whole thing.
+   ========================================================================== */
+
+.collapse {
+  display: none;
+}
+
+.collapse.in {
+  display: block;
+}
+
+.collapsing {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.35s ease;
+}
+
+.nav {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.nav > li > a {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  font-size: 13px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+@media (min-width: 480px) { /* was $screen-xs-min */
+  .nav > li > a {
+    font-size: 14px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+/* `text-decoration: none` on hover/focus comes from Bootstrap's own
+   `.nav > li > a:hover, :focus` rule. It must be carried over explicitly —
+   the base layer's `a:hover { text-decoration: underline }` would
+   otherwise underline every nav link on hover, which the live site
+   does not do. */
+.nav > li > a:hover,
+.nav > li > a:focus {
+  text-decoration: none;
+}
+
+.nav > li > a:visited,
+.nav > li > a:focus {
+  background-color: transparent;
+  color: #fff;
+}
+
+.nav > li > a:hover {
+  background-color: transparent;
+  color: var(--color-bright-red);
+}
+
+.nav > li > a:active {
+  background-color: transparent;
+  color: var(--color-dark-blue);
+}
+
+.navbar {
+  position: relative;
+  border: 1px solid transparent;
+  top: -100px;
+  min-height: 120px;
+  z-index: var(--z2);
+}
+
+.navbar-collapse {
+  overflow-x: visible;
+  padding-right: 15px;
+  padding-left: 15px;
+  border-top: 1px solid transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.navbar-collapse::before,
+.navbar-collapse::after {
+  content: " ";
+  display: table;
+}
+
+.navbar-collapse::after {
+  clear: both;
+}
+
+.navbar-nav {
+  margin: 7.5px -15px;
+  float: none;
+  text-align: center;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.navbar-nav > li {
+  float: none;
+  display: inline-block;
+
+  & > a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 20px;
+    display: inline-block;
+    color: var(--color-white);
+  }
+}
+
+.spacey {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.navbar-toggle {
+  position: fixed;
+  left: 25px;
+  top: 17px;
+  height: 50px;
+  width: 50px;
+  padding: 13px;
+  margin: 0 30px 30px 0;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-button);
+  z-index: var(--z5);
+
+  &:hover {
+    box-shadow: var(--shadow-button-active);
+  }
+
+  &:active {
+    background-color: var(--color-bright-red);
+    box-shadow: var(--shadow-button-active);
+  }
+
+  & .icon-bar {
+    display: block;
+    width: 22px;
+    height: 3px;
+    border-radius: 1px;
+
+    & + .icon-bar {
+      margin-top: 4px;
+    }
+  }
+
+  & span {
+    background-color: var(--color-dark-blue);
+  }
+}
+
+@media (min-width: 768px) { /* was $screen-sm-min */
+  #navbar-collapse {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) { /* was $screen-sm-min */
+  .navbar-collapse {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-color: var(--color-white);
+    z-index: var(--z4);
+
+    & ul {
+      margin-top: 50%;
+      text-align: center;
+
+      & li {
+        display: block;
+        margin-bottom: 30px;
+
+        & a {
+          display: block;
+          color: var(--color-dark-blue);
+          font-size: 22px;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+/* NOTE: main.scss also had a `.nav-collapse > ul` rule (setting a 50px
+   bottom margin on its list items) — omitted here. `.nav-collapse`, without
+   the "navbar-" prefix, matches nothing in the markup and is referenced by
+   no selector in any script; it was already dead CSS in the live site. */
