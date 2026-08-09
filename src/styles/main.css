@@ -132,6 +132,16 @@ a:hover {
 img {
   border: 0;
   vertical-align: middle;
+
+  /* Production's <img> tags carry no width/height attributes, so their
+     height has always come from the aspect ratio. eleventy-img (Task 11)
+     DOES emit width/height — good, it reserves space and prevents layout
+     shift — but without `height: auto` the height attribute becomes the
+     used height and images render at their intrinsic height regardless of
+     how CSS sized their width. `.img-responsive` already carries this;
+     `.img-work` does not, which is how it surfaced. Setting it globally
+     matches production behavior for every image. */
+  height: auto;
 }
 
 button,

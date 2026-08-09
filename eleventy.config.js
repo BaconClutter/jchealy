@@ -21,7 +21,7 @@ export default function (eleventyConfig) {
     "src/images/banner-mobile-hta.jpg": "images/banner-mobile-hta.jpg",
   });
 
-  eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass, id) {
+  eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass, id, sizes) {
     // Note: check for `undefined`, NOT falsiness — alt="" is a valid and
     // meaningful value (decorative image, hidden from screen readers), and
     // most of this site's images are decorative. A `!alt` check would
@@ -35,22 +35,22 @@ export default function (eleventyConfig) {
       outputDir: "./_site/images/",
       urlPath: "/images/",
     });
+    // Build attributes conditionally. eleventy-img's generateHTML serializes
+    // whatever keys are present without checking for undefined, so setting a
+    // key to undefined emits the literal string `id="undefined"`.
     const imageAttributes = {
       alt,
-      sizes: "100vw",
+      // `sizes` is not merely a download hint: when CSS width is `auto`, the
+      // browser derives the element's layout width from it. `#introImg` is
+      // exactly that case, so it passes an accurate value rather than the
+      // default. Every other image on this site has its width pinned by CSS,
+      // where `sizes` only affects which candidate is fetched.
+      sizes: sizes || "100vw",
       loading: "lazy",
       decoding: "async",
     };
-    // Note: eleventy-img's generateHTML does not strip attributes whose
-    // value is JS `undefined` — it serializes them literally as e.g.
-    // `id="undefined"`. So `class`/`id` must be omitted from the object
-    // entirely when not supplied, not set to `undefined`.
-    if (cssClass) {
-      imageAttributes.class = cssClass;
-    }
-    if (id) {
-      imageAttributes.id = id;
-    }
+    if (cssClass) imageAttributes.class = cssClass;
+    if (id) imageAttributes.id = id;
     return eleventyImage.generateHTML(metadata, imageAttributes);
   });
 
