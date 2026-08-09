@@ -14,10 +14,18 @@
 
 Tasks 8–10 convert `app/styles/main.scss` (1019 lines) into native CSS. **Do not hand-convert directly from the Sass source.** Two real discoveries during planning proved this is unreliable:
 
-1. Sass compiles nested `@media` blocks to a *different cascade position* than their source location suggests (Dart Sass hoists a nested `@media` to emit as a separate top-level block right where it was nested, not necessarily where you'd expect relative to sibling declarations). This produced two instances of **dead CSS in the current live site** that must be preserved as dead, not "fixed": `.project-banner`'s `@media (max-width: 768px) { height: 250px }` rule is always overridden by the unconditional `height: 406px` that follows it in compiled order, and `.btn-project-close`'s `@media (min-width: 768px) { top: -100px }` is always overridden by a later `@media (min-width: 480px) { top: 15px }` rule. Both are preserved verbatim in Task 10 below — this is intentional, not an error in this plan.
+1. Sass compiles nested `@media` blocks to a *different cascade position* than their source location suggests, and **different Sass compilers disagree about where**. This matters concretely: `.btn-project-close`'s `@media (min-width: 768px) { top: -100px }` is genuinely dead — always overridden by a later `@media (min-width: 480px) { top: 15px }` — in both the reference build and live production, so it is preserved as dead in Task 10.
 2. `@extend` interactions (e.g., `.work-inner-container { @extend .container }`) only reveal their true computed behavior once compiled — this is literally the mechanism that caused the full-width Work-section bug fixed earlier in this project's history.
 
-Every rule below was verified against the actual compiled output (`.tmp/styles/main.css`, produced by the currently-working `npx grunt sass`), not reconstructed from memory. Each CSS task still starts with a step to regenerate that file fresh, so you can cross-check.
+### Correction: the reference build is not always identical to what is deployed
+
+The reference file `docs/superpowers/reference/compiled-main.css` was regenerated with **Dart Sass** during Task 1. The CSS actually deployed to jchealy.com was built years ago with **node-sass/libsass**. For virtually every rule the two agree, because the declarations themselves are identical — but the two compilers **hoist nested `@media` blocks to opposite positions**, which changes who wins the cascade.
+
+One rule is affected, and it is not dead code:
+
+- `.project-banner` — Dart Sass emits the nested `@media (max-width: 768px) { height: 250px }` *before* the unconditional `height: 406px`, making the media query a no-op. **Live production emits them in the opposite order**, so banners really are 250px tall at ≤768px. Measured directly: at a 500px viewport, live renders 250px. An earlier draft of this plan asserted this rule was dead and told you to preserve it verbatim; that was wrong, and Task 9's CSS has been corrected to put the unconditional rule first.
+
+**Practical rule when porting:** use the reference file for *declaration values* — it is reliable there. But whenever cascade **order** decides the outcome (the same property set twice for one selector, once conditionally), verify against the live stylesheet at `https://www.jchealy.com`, not just the reference. Better still, measure both sites in a browser at the relevant viewport.
 
 ---
 
@@ -1625,20 +1633,12 @@ img.about-headshot {
   }
 }
 
-/* NOTE: this @media rule is dead code, preserved intentionally for parity
-   with the current live site. In the compiled Sass output, this rule
-   emits BEFORE the unconditional `height: 406px` below (Dart Sass hoists
-   a nested @media to where it was declared inside the rule, which here
-   was first), so the unconditional rule always wins, at every viewport.
-   Confirmed against .tmp/styles/main.css during planning. Worth revisiting
-   as a follow-up, but changing it now would be a visual regression
-   relative to what's live today, not a fix. */
-@media (max-width: 768px) {
-  .project-banner {
-    height: 250px;
-  }
-}
-
+/* Banner height. The order of these two rules matters and is NOT the order
+   the Dart Sass reference emits them in — see the correction note below.
+   Live production serves the unconditional 406px FIRST and the max-width
+   override SECOND, so banners really are 250px tall at <=768px. Verified by
+   measuring both sites at a 500px viewport: live 250px, and this port must
+   match. Do not reorder these. */
 .project-banner {
   height: 406px;
   text-align: center;
@@ -1646,6 +1646,12 @@ img.about-headshot {
   background-position: center center;
   background-size: cover;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .project-banner {
+    height: 250px;
+  }
 }
 
 .is_stuck {
