@@ -760,20 +760,12 @@ img.about-headshot {
   }
 }
 
-/* NOTE: this @media rule is dead code, preserved intentionally for parity
-   with the current live site. In the compiled Sass output, this rule
-   emits BEFORE the unconditional `height: 406px` below (Dart Sass hoists
-   a nested @media to where it was declared inside the rule, which here
-   was first), so the unconditional rule always wins, at every viewport.
-   Confirmed against .tmp/styles/main.css during planning. Worth revisiting
-   as a follow-up, but changing it now would be a visual regression
-   relative to what's live today, not a fix. */
-@media (max-width: 768px) {
-  .project-banner {
-    height: 250px;
-  }
-}
-
+/* Banner height. The order of these two rules matters and is NOT the order
+   the Dart Sass reference emits them in — see the correction note below.
+   Live production serves the unconditional 406px FIRST and the max-width
+   override SECOND, so banners really are 250px tall at <=768px. Verified by
+   measuring both sites at a 500px viewport: live 250px, and this port must
+   match. Do not reorder these. */
 .project-banner {
   height: 406px;
   text-align: center;
@@ -781,6 +773,12 @@ img.about-headshot {
   background-position: center center;
   background-size: cover;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .project-banner {
+    height: 250px;
+  }
 }
 
 .is_stuck {
