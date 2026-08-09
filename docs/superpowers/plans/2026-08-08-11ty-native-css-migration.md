@@ -1236,6 +1236,7 @@ picture {
 .navbar {
   position: relative;
   border: 1px solid transparent;
+  margin-bottom: 20px;
   top: -100px;
   min-height: 120px;
   z-index: var(--z2);
@@ -1308,6 +1309,12 @@ picture {
     box-shadow: var(--shadow-button-active);
   }
 
+  /* Bootstrap suppressed the default focus ring on this button; without it
+     the round hamburger gets a browser outline on keyboard focus. */
+  &:focus {
+    outline: 0;
+  }
+
   & .icon-bar {
     display: block;
     width: 22px;
@@ -1327,6 +1334,16 @@ picture {
 @media (min-width: 768px) { /* was $screen-sm-min */
   #navbar-collapse {
     display: none !important;
+  }
+
+  /* Hides the hamburger button at desktop widths. This comes from
+     Bootstrap's navbar layer, not from main.scss, which is why it is easy
+     to miss when porting only the site's own stylesheet — but it is
+     load-bearing: without it the round hamburger stays visible on desktop,
+     overlapping the page. Verified present in both the compiled reference
+     and the live production stylesheet. */
+  .navbar-toggle {
+    display: none;
   }
 }
 
