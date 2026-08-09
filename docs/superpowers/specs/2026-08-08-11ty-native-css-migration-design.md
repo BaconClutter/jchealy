@@ -102,6 +102,6 @@ Done in a feature branch in the current repo (not a separate repo, to preserve g
 Once this migration ships and is verified live:
 - Add a new Validic project section (banner + detail page)
 - Remove the Helios Towers Africa project (banner + detail page)
-- Fix the contact form's error path. `mail.js`'s `.fail()` handler still does `$formMessages.text(data.responseText)`, which was written against `sender.php`'s short human-readable error strings. Netlify Forms returns its own error page instead, so a rejected submission (spam-filtered, malformed) would dump a wall of raw markup into the error div. It renders as inert text rather than executing, so this is a UX problem and not a security one. The fix mirrors what the migration already did for the success path: show a fixed friendly string. Deliberately left out of the migration, which scoped `mail.js` to a single change.
+- ~~Fix the contact form's error path.~~ **Done** (commit `0a2d010`). The `.fail()` handler was rendering `data.responseText`, written for `sender.php`'s short error strings; Netlify returns a full HTML error page, so a failed submission painted the page source into the error div. Observed for real on the first Netlify deploy, before form detection had run. Now shows a fixed message with a fallback email address and logs the HTTP status to the console.
 
 Both become straightforward with the `projects.json`-driven structure this migration establishes.
