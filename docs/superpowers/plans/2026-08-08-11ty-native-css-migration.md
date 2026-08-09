@@ -959,6 +959,16 @@ a:hover {
 img {
   border: 0;
   vertical-align: middle;
+
+  /* Production's <img> tags carry no width/height attributes, so their
+     height has always come from the aspect ratio. eleventy-img (Task 11)
+     DOES emit width/height — good, it reserves space and prevents layout
+     shift — but without `height: auto` the height attribute becomes the
+     used height and images render at their intrinsic height regardless of
+     how CSS sized their width. `.img-responsive` already carries this;
+     `.img-work` does not, which is how it surfaced. Setting it globally
+     matches production behavior for every image. */
+  height: auto;
 }
 
 button,
@@ -2324,7 +2334,7 @@ export default function (eleventyConfig) {
     "src/images/banner-mobile-hta.jpg": "images/banner-mobile-hta.jpg",
   });
 
-  eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass, id) {
+  eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass, id, sizes) {
     // Note: check for `undefined`, NOT falsiness — alt="" is a valid and
     // meaningful value (decorative image, hidden from screen readers), and
     // most of this site's images are decorative. A `!alt` check would
@@ -2338,14 +2348,22 @@ export default function (eleventyConfig) {
       outputDir: "./_site/images/",
       urlPath: "/images/",
     });
+    // Build attributes conditionally. eleventy-img's generateHTML serializes
+    // whatever keys are present without checking for undefined, so setting a
+    // key to undefined emits the literal string `id="undefined"`.
     const imageAttributes = {
       alt,
-      class: cssClass || undefined,
-      id: id || undefined,
-      sizes: "100vw",
+      // `sizes` is not merely a download hint: when CSS width is `auto`, the
+      // browser derives the element's layout width from it. `#introImg` is
+      // exactly that case, so it passes an accurate value rather than the
+      // default. Every other image on this site has its width pinned by CSS,
+      // where `sizes` only affects which candidate is fetched.
+      sizes: sizes || "100vw",
       loading: "lazy",
       decoding: "async",
     };
+    if (cssClass) imageAttributes.class = cssClass;
+    if (id) imageAttributes.id = id;
     return eleventyImage.generateHTML(metadata, imageAttributes);
   });
 
@@ -2367,9 +2385,11 @@ Replace each of these five lines:
 ```
 with:
 ```njk
-{% image "johnhealy-m.png", "John Healy typographic banner text", "img-responsive", "introImg" %}
+{% image "johnhealy-m.png", "John Healy typographic banner text", "img-responsive", "introImg", "(min-width: 768px) 434px, 60vw" %}
 ```
-(the 4th argument is the `id`, which the shortcode applies to the generated `<img>` — `#introImg` carries real layout rules (`width: 60%`, `vertical-align: middle`), so it has to land on the image element itself, not a wrapper.)
+The 4th argument is the `id` — `#introImg` carries real layout rules (`width: 60%`, `vertical-align: middle`), so it must land on the image element itself, not a wrapper.
+
+The 5th argument is `sizes`, and this image is the reason that parameter exists. `#introImg` is the only image on the site whose CSS width is `auto` (at ≥768px). For such an element the browser derives its layout width from the `sizes` attribute, so the default `100vw` would render the hero signature at full container width — measured at 1024px against production's 434px, roughly 2.4× too large. The value here mirrors the CSS: intrinsic `434px` at ≥768px where CSS says `width: auto`, and `60vw` below that where CSS says `width: 60%`.
 
 ```njk
 <img class="img-responsive img-about" src="/images/about.png" />
