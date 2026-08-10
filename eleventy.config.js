@@ -19,7 +19,6 @@ export default function (eleventyConfig) {
     "src/images/banner-mobile-hillrom.jpg": "images/banner-mobile-hillrom.jpg",
     "src/images/banner-mobile-ssa.jpg": "images/banner-mobile-ssa.jpg",
     "src/images/banner-mobile-artistprofile.jpg": "images/banner-mobile-artistprofile.jpg",
-    "src/images/banner-mobile-hta.jpg": "images/banner-mobile-hta.jpg",
   });
 
   eleventyConfig.addAsyncShortcode("image", async function (src, alt, cssClass, id, sizes) {

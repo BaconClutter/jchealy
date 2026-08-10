@@ -22,11 +22,5 @@
     "bannerClass": "project-ssa",
     "title": "TowerCo Geospatial Support",
     "subtitle": "GIS Web Application"
-  },
-  {
-    "id": "projectHTA",
-    "bannerClass": "project-hta",
-    "title": "Helios Towers Africa",
-    "subtitle": "Responsive Web Application"
   }
 ]
