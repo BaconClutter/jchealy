@@ -26,19 +26,24 @@ Code Style: http://codeguide.co/#css
      hand. Change a value here and the entire site follows, canvas
      graphics included.
 
+     This palette is the one explored under the working name "quiet":
+     near-monochrome with a single saturated accent, so the work carries
+     the page rather than the colour scheme. The navy/cream/orange the
+     site used from 2014 is preserved as ?theme=classic.
+
      To try a whole scheme, see the [data-theme] blocks below.
      ------------------------------------------------------------------ */
 
   /* Surfaces */
-  --color-surface:        #fff;      /* default page background          */
-  --color-surface-warm:   #FAE7C9;   /* About section                    */
-  --color-surface-muted:  #EDEDED;   /* light project-detail band        */
-  --color-surface-dark:   #4A4A4A;   /* dark project-detail band         */
+  --color-surface:        #FFFFFF;   /* default page background          */
+  --color-surface-warm:   #F2F0EC;   /* About section                    */
+  --color-surface-muted:  #F0F0F0;   /* light project-detail band        */
+  --color-surface-dark:   #3A3A3A;   /* dark project-detail band         */
 
   /* Ink — dark text, and the dark surfaces that invert it */
-  --color-ink:            #0D1316;   /* headline text, header/footer bg  */
-  --color-text-base:      #333333;   /* body default                     */
-  --color-text-muted:     #9B9B9B;   /* client/date meta                 */
+  --color-ink:            #111111;   /* headline text, header/footer bg  */
+  --color-text-base:      #2E2E2E;   /* body default                     */
+  --color-text-muted:     #9A9A9A;   /* client/date meta                 */
 
   /* Text sitting ON a dark surface or a banner photo. Deliberately NOT
      the same token as --color-surface, even though both are white today:
@@ -47,9 +52,9 @@ Code Style: http://codeguide.co/#css
   --color-text-inverse:   #fff;
 
   /* Accent */
-  --color-accent:         #DC4601;   /* Contact section, links, headings */
-  --color-accent-deep:    #B23800;   /* form field backgrounds           */
-  --color-accent-cool:    #043963;   /* the one cool project band        */
+  --color-accent:         #B23A2F;   /* Contact section, links, headings */
+  --color-accent-deep:    #8C2C23;   /* form field backgrounds           */
+  --color-accent-cool:    #2E2E2E;   /* the one cool project band        */
 
   /* Generic anchor colour, inherited from Bootstrap. Near-inert in
      practice — nav links, social icons and buttons all set their own
@@ -59,10 +64,10 @@ Code Style: http://codeguide.co/#css
 
   /* Decorative backdrops — the animated rings drawn by Snap.svg.
      Previously hardcoded inside custom-svg.js, invisible to CSS. */
-  --color-backdrop-1:     #091928;   /* header ring, innermost           */
-  --color-backdrop-2:     #0c2033;   /* header ring, middle              */
-  --color-backdrop-3:     #0d273e;   /* header ring, outermost           */
-  --color-backdrop-warm:  #f8daaa;   /* About ring                       */
+  --color-backdrop-1:     #0E0E0E;   /* header ring, innermost           */
+  --color-backdrop-2:     #171717;   /* header ring, middle              */
+  --color-backdrop-3:     #202020;   /* header ring, outermost           */
+  --color-backdrop-warm:  #E2DFD8;   /* About ring                       */
 
   --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
   --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
@@ -92,13 +97,36 @@ Code Style: http://codeguide.co/#css
    backdrops (those read these values at runtime).
 
    To try one:
-     • add ?theme=dusk to any URL, or
+     • add ?theme=classic to any URL, or
      • in the console: document.documentElement.dataset.theme = 'dusk'
      • back to default: delete document.documentElement.dataset.theme
 
    Nothing here is wired into the shipped design — the default :root
    palette above is what renders unless a theme is explicitly asked for.
    ========================================================================== */
+
+/* The palette the site shipped with from 2014 until this change: navy,
+   cream and orange. Kept so the previous look is one URL away for
+   comparison — ?theme=classic — not because anything still depends on it. */
+:root[data-theme="classic"] {
+  --color-surface:        #fff;
+  --color-surface-warm:   #FAE7C9;
+  --color-surface-muted:  #EDEDED;
+  --color-surface-dark:   #4A4A4A;
+
+  --color-ink:            #0D1316;
+  --color-text-base:      #333333;
+  --color-text-muted:     #9B9B9B;
+
+  --color-accent:         #DC4601;
+  --color-accent-deep:    #B23800;
+  --color-accent-cool:    #043963;
+
+  --color-backdrop-1:     #091928;
+  --color-backdrop-2:     #0c2033;
+  --color-backdrop-3:     #0d273e;
+  --color-backdrop-warm:  #f8daaa;
+}
 
 /* Warmer and earthier. Espresso instead of navy, sand instead of cream,
    a burnt orange that sits closer to terracotta than the current red. */
@@ -142,28 +170,6 @@ Code Style: http://codeguide.co/#css
   --color-backdrop-2:     #101E26;
   --color-backdrop-3:     #152833;
   --color-backdrop-warm:  #CFE0E6;
-}
-
-/* Most restrained. Near-monochrome with a single saturated accent —
-   the design decisions carry the page rather than the palette. */
-:root[data-theme="quiet"] {
-  --color-surface:        #FFFFFF;
-  --color-surface-warm:   #F2F0EC;
-  --color-surface-muted:  #F0F0F0;
-  --color-surface-dark:   #3A3A3A;
-
-  --color-ink:            #111111;
-  --color-text-base:      #2E2E2E;
-  --color-text-muted:     #9A9A9A;
-
-  --color-accent:         #B23A2F;
-  --color-accent-deep:    #8C2C23;
-  --color-accent-cool:    #2E2E2E;
-
-  --color-backdrop-1:     #0E0E0E;
-  --color-backdrop-2:     #171717;
-  --color-backdrop-3:     #202020;
-  --color-backdrop-warm:  #E2DFD8;
 }
 
 /* ==========================================================================
