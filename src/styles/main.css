@@ -950,6 +950,7 @@ img.about-headshot {
   overflow: hidden;
 }
 
+.project-validic { background-image: url(/images/banner-mobile-validic.jpg); }
 .project-hillrom { background-image: url(/images/banner-mobile-hillrom.jpg); }
 .project-ssa { background-image: url(/images/banner-mobile-ssa.jpg); }
 .project-artistprofile { background-image: url(/images/banner-mobile-artistprofile.jpg); }

@@ -15,6 +15,7 @@ export default function (eleventyConfig) {
   // main.css is a static file with no build step (see design spec) and
   // can't reference build-time-generated optimized filenames.
   eleventyConfig.addPassthroughCopy({
+    "src/images/banner-mobile-validic.jpg": "images/banner-mobile-validic.jpg",
     "src/images/banner-mobile-hillrom.jpg": "images/banner-mobile-hillrom.jpg",
     "src/images/banner-mobile-ssa.jpg": "images/banner-mobile-ssa.jpg",
     "src/images/banner-mobile-artistprofile.jpg": "images/banner-mobile-artistprofile.jpg",
