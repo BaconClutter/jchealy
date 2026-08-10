@@ -993,7 +993,7 @@ img.about-headshot {
   margin-bottom: 0px;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   /* Fraunces is drawn heavier than Montserrat at the same nominal weight,
      so `bold` here would look overbearing over the banner photos. 600 is
      the visual match. */
@@ -1008,7 +1008,7 @@ img.about-headshot {
   margin-top: 7px;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: normal;
   letter-spacing: -0.004em;
   color: var(--color-text-inverse);
@@ -1016,9 +1016,9 @@ img.about-headshot {
 
 /* A @media (min-width: 480px) block sat here holding only two rules:
    .project-title 20px -> 24px and .project-subtitle 13px -> 14px. On the
-   major-third scale both ends of both bumps land on the same step
-   (--text-lg and --text-sm), so the whole block was a no-op and is gone.
-   Banner titles are now one consistent size at every width. */
+   major-third scale both ends of each bump collapsed onto a single step,
+   so the block was a no-op and is gone. Banner titles and subtitles are
+   now one consistent size at every width. */
 
 .btn-project-explode,
 .btn-project-close {
