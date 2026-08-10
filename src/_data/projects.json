@@ -1,5 +1,11 @@
 [
   {
+    "id": "projectValidic",
+    "bannerClass": "project-validic",
+    "title": "Validic Impact Design System",
+    "subtitle": "Remote patient monitoring platform"
+  },
+  {
     "id": "projectArtistProfile",
     "bannerClass": "project-artistprofile",
     "title": "ReverbNation Artist Profile",
