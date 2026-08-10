@@ -43,7 +43,12 @@ Code Style: http://codeguide.co/#css
   /* Ink — dark text, and the dark surfaces that invert it */
   --color-ink:            #111111;   /* headline text, header/footer bg  */
   --color-text-base:      #2E2E2E;   /* body default                     */
-  --color-text-muted:     #9A9A9A;   /* client/date meta                 */
+  /* #767676 rather than a lighter gray: this is the lightest neutral that
+     still clears WCAG AA (4.5:1) on white. The previous value read at
+     2.8:1, which failed even the large-text threshold — a gap the site
+     carried since 2014 and which a near-monochrome palette leans on more
+     heavily, since gray is doing more of the hierarchy work. */
+  --color-text-muted:     #767676;   /* client/date meta                 */
 
   /* Text sitting ON a dark surface or a banner photo. Deliberately NOT
      the same token as --color-surface, even though both are white today:
@@ -1250,7 +1255,10 @@ img.about-headshot {
   z-index: var(--z1);
   padding: 90px 0;
   background-color: var(--color-accent);
-  color: var(--color-ink);
+  /* Text on this block is inverse, not ink. Near-black on a saturated
+     accent measured 3.2:1 — under AA for the 13px copy and 16px subtitle
+     that live here, neither of which is large enough to be exempt. */
+  color: var(--color-text-inverse);
   overflow: hidden;
 }
 
@@ -1333,7 +1341,7 @@ img.img-contact {
 
 .svg-icon {
   width: 40%;
-  fill: var(--color-ink);
+  fill: var(--color-text-inverse);
 }
 
 .svg-icon:hover {
@@ -1417,7 +1425,10 @@ img.img-contact {
 }
 
 .feedback-input {
-  color: var(--color-ink);
+  /* 2.2:1 as ink on the deep-accent field. This is the text a visitor
+     types, so it has to be readable. On focus the field turns light and
+     the rule below correctly switches back to ink. */
+  color: var(--color-text-inverse);
   border: none;
   background-color: var(--color-accent-deep);
   padding: 15px 13px 15px 13px;
@@ -1451,18 +1462,20 @@ input:focus, textarea:focus {
   background-color: var(--color-surface-warm);
 }
 
+/* Placeholders were --color-accent on the deep-accent field: 1.4:1, which
+   is effectively invisible. */
 ::-webkit-input-placeholder {
-  color: var(--color-accent);
+  color: var(--color-text-inverse);
   font-weight: bold;
 }
 
 ::-moz-placeholder {
-  color: var(--color-accent);
+  color: var(--color-text-inverse);
   font-weight: bold;
 }
 
 :-ms-input-placeholder {
-  color: var(--color-accent);
+  color: var(--color-text-inverse);
   font-weight: bold;
 }
 
