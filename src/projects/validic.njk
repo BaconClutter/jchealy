@@ -1,0 +1,90 @@
+---
+permalink: /projectValidic.html
+---
+	<div class="project-expanded" id="projectValidicInner">
+
+		<div class="project-expanded-section project-section-white">
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">Validic Impact is a remote patient monitoring platform built around two applications: an admin tool where healthcare organizations configure monitoring programs, and a clinician workspace for tracking enrolled patients. There was no shared design system. Patterns drifted between the two apps, and nearly every new feature meant a developer building something custom from scratch.</p>
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-gray">
+			<h3>A shared visual language</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">I organized the system around foundations, navigation, inputs and forms, data display, charts and feedback, with separate libraries for the admin and clinician applications. Grouping it this way gave design and development a common vocabulary — a conversation could name a component instead of describing a screenshot.</p>
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-system-overview.png", "", "img-responsive center-block" %}
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-white">
+			<h3>Tokens as the foundation</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">Underneath the components sit design tokens: full grayscale and primary ramps, semantic colors for warning, success and error states, and a type scale built on a 1.414 augmented fourth in Poppins. A value gets defined once and referenced everywhere, so a change propagates instead of being hunted down screen by screen.</p>
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-tokens.png", "", "img-responsive center-block" %}
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-gray-dark">
+			<h3>One component, every reading</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">The data cluster is the clearest example of the approach. One component handles weight, blood pressure, glucose and heart rate — in or out of range, trending up or down, annotated or plain, alone or paired with a second measurement. Rather than drawing each combination separately, I defined the variables once and let the component absorb them.</p>
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-data-clusters.png", "", "img-responsive center-block" %}
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-white">
+			<h3>Monitoring at a glance</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">Clinicians start with a roster of everyone enrolled in a program. Two-week sparkline trends sit beside the latest reading, so the whole panel can be scanned for movement before opening a single record.</p>
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-panel-view.png", "", "img-responsive center-block" %}
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-gray">
+			<h3>The patient record</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">Opening a participant reveals the full record: alerts, notes, goals, automated events, and a logbook of every reading. It's assembled almost entirely from system components — and this density is exactly what made a system necessary.</p>
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-patient-record.png", "", "img-responsive center-block" %}
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-logbook.png", "", "img-responsive center-block" %}
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-red">
+			<h3>Configuring programs</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">On the admin side, organizations configure their own programs: the conditions that trigger an alert, the actions that follow, and the content participants receive at each step of enrollment — in multiple languages. Localization was a system concern rather than an afterthought, since components had to hold text of unpredictable length.</p>
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-compound-events.png", "", "img-responsive center-block" %}
+			</div>
+			<div class="project-expanded-content-wide">
+				{% image "project-validic-content-translation.png", "", "img-responsive center-block" %}
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-white">
+			<h3>Handing the system to engineering</h3>
+			<div class="project-expanded-content">
+				<p class="project-expanded-text-only">I helped introduce Storybook so the system lived in code as well as in design files. For me and the front-end developers it became the place to cycle through the many interaction states this application demands — every range, alert and status, side by side and inspectable. Developers gained the autonomy to assemble screens from components already agreed on, instead of waiting on a custom build.</p>
+			</div>
+		</div>
+
+		<div class="project-expanded-section project-section-white">
+			<h5>Client: Validic</h5>
+			<h6>2021</h6>
+		</div>
+
+	</div> <!-- /project-expanded -->
