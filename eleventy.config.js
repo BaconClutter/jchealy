@@ -30,7 +30,14 @@ export default function (eleventyConfig) {
       throw new Error(`Missing alt text for image: ${src} (pass "" if decorative)`);
     }
     const metadata = await eleventyImage(`./src/images/${src}`, {
-      widths: [400, 800, 1200, null],
+      // 2400 is the top tier, and `null` (the untouched original) is
+      // deliberately NOT in this list. Several case-study screenshots are
+      // 4500-5200px wide; leaving the original as a candidate meant any
+      // retina laptop downloaded a ~400KB source to paint it at ~1050 CSS
+      // px, because there was nothing between 1200 and 5176 to pick.
+      // eleventy-img never upscales, so a source narrower than a requested
+      // width is simply clamped -- smaller images are unaffected by this.
+      widths: [400, 800, 1200, 2400],
       formats: ["webp", "auto"],
       outputDir: "./_site/images/",
       urlPath: "/images/",
@@ -45,6 +52,12 @@ export default function (eleventyConfig) {
       // exactly that case, so it passes an accurate value rather than the
       // default. Every other image on this site has its width pinned by CSS,
       // where `sizes` only affects which candidate is fetched.
+      //
+      // Case-study images all pass "83vw" because they sit in
+      // `.project-expanded-content-wide` (83.33% of a row that is itself 30px
+      // wider than the viewport, so 0.8333vw - 5px -- 83vw rounds that up by
+      // a few pixels, which is the safe direction). The "100vw" default was a
+      // 20% overstatement that pushed every retina request up a whole tier.
       sizes: sizes || "100vw",
       loading: "lazy",
       decoding: "async",
