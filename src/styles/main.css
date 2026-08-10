@@ -87,6 +87,29 @@ Code Style: http://codeguide.co/#css
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 
+  /* Type scale — a major third (1.250) from an 18px base.
+     Replaces the twelve ad-hoc sizes (10/12/13/14/16/18/20/22/24/30/34/36)
+     the site inherited from Bootstrap 3 and then drifted from.
+
+     In rem, against `html { font-size: 100% }`, so the whole scale moves
+     with a reader's own browser font-size setting. Every value below is
+     exact — no repeating decimals — because 16 divides the scale cleanly.
+
+     Sizes under 20px keep a half-pixel so the ratio stays honest; above
+     that they round to whole pixels (largest drift, at --text-xl, is 0.4%).
+
+     Steps are mapped by ROLE, not by nearest number. Reading copy sits at
+     --text-base; UI chrome sits a step below it at --text-sm. Mapping
+     numerically instead would have pulled the 16px reading paragraphs down
+     to 14.5px, which is the opposite of what an 18px base is for. */
+  --text-xs:   0.71875rem;  /* 11.5px  — step -2  h6                        */
+  --text-sm:   0.90625rem;  /* 14.5px  — step -1  UI, nav, meta, body       */
+  --text-base: 1.125rem;    /*   18px  — step  0  reading copy, buttons     */
+  --text-lg:   1.375rem;    /*   22px  — step +1  h3, project + mobile nav  */
+  --text-xl:   1.75rem;     /*   28px  — step +2  h2, "view project"        */
+  --text-2xl:  2.1875rem;   /*   35px  — step +3  h1, contact form title    */
+  --text-3xl:  2.75rem;     /*   44px  — step +4  unused; headroom          */
+
   --z1: 100;
   --z2: 200;
   --z3: 300;
@@ -206,14 +229,22 @@ Code Style: http://codeguide.co/#css
 
 html {
   font-family: sans-serif;
-  font-size: 10px;
+  /* Was 10px — Bootstrap 3's trick for making rem math tidy (1rem = 10px).
+     It was inert here: nothing on the site used rem, and `body` immediately
+     overrode the inherited size. Now that the type scale IS in rem, this has
+     to be 100% so a step resolves against the reader's browser font-size
+     rather than a hardcoded 10px, which would render the whole site at 62.5%
+     of its intended size. */
+  font-size: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 body {
   margin: 0;
-  font-size: 14px;
+  /* The document default, which is UI chrome rather than reading size —
+     long-form copy opts up to --text-base at its own selectors. */
+  font-size: var(--text-sm);
   line-height: 1.428571429;
   color: var(--color-text-base);
   background-color: var(--color-surface);
@@ -239,12 +270,12 @@ h4, h5, h6 {
   margin-bottom: 10px;
 }
 
-h1 { font-size: 36px; }
-h2 { font-size: 30px; }
-h3 { font-size: 24px; }
-h4 { font-size: 18px; }
-h5 { font-size: 14px; }
-h6 { font-size: 12px; }
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4 { font-size: var(--text-base); }
+h5 { font-size: var(--text-sm); }
+h6 { font-size: var(--text-xs); }
 
 p {
   margin: 0 0 10px;
@@ -395,7 +426,7 @@ picture {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 30px;
-  font-size: 14px;
+  font-size: var(--text-sm);
   z-index: var(--z1);
   padding-left: 25%;
   padding-right: 25%;
@@ -404,7 +435,7 @@ picture {
 
 @media (min-width: 480px) { /* was $screen-xs-min */
   .intro-title {
-    font-size: 16px;
+    font-size: var(--text-base);
     padding-top: 40px;
     padding-left: 0;
     padding-right: 0;
@@ -525,14 +556,16 @@ picture {
   position: relative;
   display: block;
   padding: 10px 15px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   padding-left: 5px;
   padding-right: 5px;
 }
 
 @media (min-width: 480px) { /* was $screen-xs-min */
   .nav > li > a {
-    font-size: 14px;
+    /* The 13px -> 14px bump that used to live here is gone: both ends of it
+       now resolve to --text-sm, so it had become a no-op. The padding change
+       is the real content of this breakpoint. */
     padding-left: 15px;
     padding-right: 15px;
   }
@@ -709,7 +742,7 @@ picture {
         & a {
           display: block;
           color: var(--color-ink);
-          font-size: 22px;
+          font-size: var(--text-lg);
           font-weight: bold;
         }
       }
@@ -753,12 +786,12 @@ picture {
   & p {
     padding-top: 30px;
     font-weight: normal;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 160%;
     text-align: left;
 
     @media (min-width: 480px) { /* was $screen-xs-min */
-      font-size: 16px;
+      font-size: var(--text-base);
     }
   }
 }
@@ -960,7 +993,7 @@ img.about-headshot {
   margin-bottom: 0px;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: 20px;
+  font-size: var(--text-lg);
   /* Fraunces is drawn heavier than Montserrat at the same nominal weight,
      so `bold` here would look overbearing over the banner photos. 600 is
      the visual match. */
@@ -975,20 +1008,17 @@ img.about-headshot {
   margin-top: 7px;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: normal;
   letter-spacing: -0.004em;
   color: var(--color-text-inverse);
 }
 
-@media (min-width: 480px) { /* was $screen-xs-min */
-  .project-title {
-    font-size: 24px;
-  }
-  .project-subtitle {
-    font-size: 14px;
-  }
-}
+/* A @media (min-width: 480px) block sat here holding only two rules:
+   .project-title 20px -> 24px and .project-subtitle 13px -> 14px. On the
+   major-third scale both ends of both bumps land on the same step
+   (--text-lg and --text-sm), so the whole block was a no-op and is gone.
+   Banner titles are now one consistent size at every width. */
 
 .btn-project-explode,
 .btn-project-close {
@@ -1006,7 +1036,7 @@ img.about-headshot {
   position: absolute;
   left: 38%;
   top: 27%;
-  font-size: 30px;
+  font-size: var(--text-xl);
 }
 
 .btn-project-more,
@@ -1019,7 +1049,7 @@ img.about-headshot {
   border-radius: 50%;
   border: none;
   z-index: var(--z5);
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: bold;
   text-transform: uppercase;
   box-shadow: var(--shadow-button);
@@ -1037,7 +1067,7 @@ img.about-headshot {
     top: 29%;
   }
   .btn-project-more {
-    font-size: 18px;
+    font-size: var(--text-base);
   }
 }
 
@@ -1242,7 +1272,7 @@ img.about-headshot {
   padding-top: 0px;
   padding-bottom: 25px;
   line-height: 160%;
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 300;
 }
 
@@ -1294,7 +1324,7 @@ img.about-headshot {
     position: relative;
     padding-top: 20px;
     font-weight: normal;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 160%;
     text-align: left;
   }
@@ -1308,7 +1338,7 @@ img.about-headshot {
     padding-right: 40px;
   }
   .contact-inner-container p {
-    font-size: 16px;
+    font-size: var(--text-base);
   }
   .contact-form-wrapper {
     text-align: center;
@@ -1352,7 +1382,7 @@ img.img-contact {
   padding-top: 0px;
   margin-top: 0px;
   margin-bottom: 0px;
-  font-size: 34px;
+  font-size: var(--text-2xl);
   font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.3em;
@@ -1361,7 +1391,7 @@ img.img-contact {
 .contact-form-subtitle {
   padding-top: 0px;
   margin-top: 0px;
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: bold;
 }
 
@@ -1485,7 +1515,7 @@ input:focus, textarea:focus {
   cursor: pointer;
   background-color: var(--color-ink);
   color: var(--color-text-inverse);
-  font-size: 18px;
+  font-size: var(--text-base);
   padding-top: 15px;
   padding-bottom: 15px;
   box-shadow: var(--shadow-button);
