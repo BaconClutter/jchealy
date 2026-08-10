@@ -993,7 +993,9 @@ img.about-headshot {
   margin-bottom: 0px;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: var(--text-xl);
+  /* Mobile-first: one step down from the size these run at on wider
+     screens. See the @media block below for why the step exists. */
+  font-size: var(--text-lg);
   /* Fraunces is drawn heavier than Montserrat at the same nominal weight,
      so `bold` here would look overbearing over the banner photos. 600 is
      the visual match. */
@@ -1008,17 +1010,52 @@ img.about-headshot {
   margin-top: 7px;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: normal;
   letter-spacing: -0.004em;
   color: var(--color-text-inverse);
 }
 
-/* A @media (min-width: 480px) block sat here holding only two rules:
-   .project-title 20px -> 24px and .project-subtitle 13px -> 14px. On the
-   major-third scale both ends of each bump collapsed onto a single step,
-   so the block was a no-op and is gone. Banner titles and subtitles are
-   now one consistent size at every width. */
+/* Banner type steps up once there is room for it.
+
+   This block is NOT the Bootstrap-era one that used to sit here. That one
+   stepped 20 -> 24px and 13 -> 14px, and on the major-third scale both of
+   its ends collapsed onto a single step, making it a no-op — so it was
+   deleted. This is a deliberate replacement, and the step is real: a full
+   scale step at each of the two roles.
+
+   It exists because the banner is a fixed 250px on mobile with
+   `overflow: hidden`, and the type is vertically centred inside it. At the
+   wide sizes, the longest title (Hill-Rom) wraps to two lines AND its
+   subtitle wraps to two, which together overflow that 250px box by 7px —
+   clipping the bottom of the "+" button. Holding one step back on small
+   screens keeps four pixels of headroom and stops three of the four titles
+   from wrapping at all.
+
+   The breakpoint is 769px, and it is deliberately NOT one of the site's
+   usual 480/768/992 stops. It is the width at which the banner itself
+   grows from 250px to 406px, so the type steps up exactly when its
+   container does. Note that boundary is not 480px, even though a
+   `@media (min-width: 480px)` rule sets `height: 406px`: a LATER
+   `@media (max-width: 768px)` rule sets it back to 250px and wins through
+   the whole 480-768 range. Stepping the type at 480px — which an earlier
+   version of this did — put 28px titles inside a 250px banner and clipped
+   Hill-Rom by 7px.
+
+   Tying the two together this way means it stays correct no matter how
+   long a future title is: above 769px there is ~97px of headroom even
+   with a two-line title. The cost is that tablets from roughly 535px up
+   could carry the larger type safely today and don't. That is a content
+   measurement of one specific title rather than a structural fact, so it
+   is not worth encoding. */
+@media (min-width: 769px) {
+  .project-title {
+    font-size: var(--text-xl);
+  }
+  .project-subtitle {
+    font-size: var(--text-base);
+  }
+}
 
 .btn-project-explode,
 .btn-project-close {
