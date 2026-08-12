@@ -25,7 +25,10 @@ title: John C. Healy - UX, UI, and Interaction Design
     </div>
     <h4 class="intro-title">UX, UI &amp; INTERACTION DESIGN</h4>
     <div class="intro-inner-container" id="introInnerContainer">
-      {% image "johnhealy-m.png", "John Healy typographic banner text", "img-responsive", "introImg", "(min-width: 768px) 434px, 60vw" %}
+      {# Inlined rather than an <img>: the mark is drawn with `currentColor`,
+         so it follows the palette (and the [data-theme] schemes) from CSS.
+         An external SVG in an <img> cannot see the page's custom properties. #}
+      {% include "signature.svg" %}
     </div>
     <nav class="navbar">
       <div id="navbar-NoCollapse" class="">
@@ -40,11 +43,11 @@ title: John C. Healy - UX, UI, and Interaction Design
 
   <div class="section-about" id="About">
     <div class="about-inner-container">
-      {% image "about.png", "", "img-responsive img-about" %}
+      {% include "mark-about.svg" %}
 
       <div class="content-row">
         <div class="text-holder-offset">
-          <p>I'm John, a designer of human centric, intuitive interfaces. I help build useful and fun experiences that resonate with people. Whether for the web, native app or embedded software, I focus on the little details and grand picture cohesion to make products that people love.</p>
+          <p> Hi, I'm John Healy. I've been designing software experiences for over 10 years, focusing on systems, workflows, and the results that users intend to get out of the software. I don't make things for the sake of making things, I always want to know first, who is it for, what do they need, and how can I make life a little better for them through my work.</p>
           <p>I see every UX project as a chance to improve someone's relationship with technology.</p>
         </div>
         <div class="img-holder-4">
@@ -59,8 +62,10 @@ title: John C. Healy - UX, UI, and Interaction Design
 
   <div class="section-work" id="Work">
     <div class="work-inner-container">
-      {% image "work.png", "", "img-work center-block" %}
-
+      {% include "mark-work.svg" %}
+      <div class="work-lead-in">
+        <p>Check out a selection of my work below. Expand each section to see more details and learn a bit about how I think through my projects.</p>
+      </div>
       {% for project in projects %}
       <div class="project-banner {{ project.bannerClass }}" id="{{ project.id }}">
         <div class="mob-verticalAdjustCenter">
@@ -89,7 +94,7 @@ title: John C. Healy - UX, UI, and Interaction Design
 
       <div class="row">
         <div class="col-sm-6">
-          {% image "contact.png", "", "img-responsive img-contact" %}
+          {% include "mark-contact.svg" %}
           <div class="contact-copy">
             <p>If you have a project that needs some fresh eyes, or problems that need solving, then I can help with UX, UI, Interaction and Visual Design. I also do Branding, Design Systems, Animation and Front End Development.</p>
             <p>If you want help from someone who cares about meticulous craftsmanship with a purpose, then I'd be pleased to hear from you. I’m available for freelance projects and consulting.</p>

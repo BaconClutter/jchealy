@@ -512,17 +512,63 @@ picture {
   }
 }
 
+/* The signature is an inline <svg> (see index.njk), not an <img>, so that
+   `currentColor` picks up the palette below and follows the [data-theme]
+   schemes with everything else. The PNG it replaced was baked in the 2014
+   orange (#D24301) and could never do that.
+
+   Colour: the header sits on --color-ink (#111), where --color-accent
+   measures about 2.5:1 — under AA even for large text. --color-text-inverse
+   is 18.9:1 there. To try the mark in another colour, change this one
+   declaration; nothing else needs to move.
+
+   Width, not height: an explicit width with `height: auto` lets the
+   viewBox (539x681) drive the box, so there is no aspect-ratio to keep in
+   sync. 380px at desktop matches the height the old 434x480 PNG rendered
+   at, which keeps the header's vertical rhythm — the new mark is a
+   narrower, taller composition, so matching width instead would have made
+   the header ~70px taller. */
 #introImg {
   display: inline-block;
   vertical-align: middle;
   width: 60%;
+  height: auto;
+  color: var(--color-text-inverse);
 }
 
 @media (min-width: 768px) { /* was $screen-sm-min */
   #introImg {
-    width: auto;
+    width: 380px;
   }
 }
+
+/* The three section marks, same deal as the signature: inline <svg> drawn
+   with currentColor, so one declaration each sets the colour and the
+   [data-theme] schemes come along for free.
+
+     About   ink on --color-surface-warm  (#111 on #F2F0EC, 16.6:1)
+     Work    ink on --color-surface-warm  (#111 on #F2F0EC, 16.6:1)
+     Contact inverse on --color-accent    (#fff on #B23A2F,  5.9:1)
+
+   About and Work deliberately match. They sit on the same warm surface and
+   do the same job — naming a section — so colouring them differently would
+   imply a distinction that isn't there. Work was accent while its section
+   was still on white, where the surface change carried the difference; once
+   Work moved to the warm surface that reason went away.
+
+   Keeping the accent off these also protects what it signals. It already
+   carries the Contact block, case-study h3s and nav hover, and the
+   near-monochrome palette depends on the full-bleed Contact block being the
+   one chromatic event as you scroll. Ink is also the quieter neighbour for
+   the project banners directly below, which are full-colour photography.
+
+   Sizing stays exactly where it was (.img-about / .img-work / .img-contact
+   further down). Note the new marks are squarer than the PNGs they replace,
+   so at the same width they stand taller — Contact by ~43%, Work by ~23%.
+   That is a property of the new artwork, not of this rule. */
+.img-about   { color: var(--color-ink); }
+.img-work    { color: var(--color-ink); }
+.img-contact { color: var(--color-text-inverse); }
 
 /* ==========================================================================
    Nav / collapse — the Bootstrap-derived rules that vendor/bootstrap/
@@ -775,7 +821,11 @@ picture {
   position: relative;
   text-align: center;
 
-  & img.img-about {
+  /* Not `img.img-about`: the mark is an inline <svg> now, so an
+     element-qualified selector would stop matching and silently drop the
+     sizing. Same reason the rules at the 768px breakpoint and
+     `.img-contact` further down lost their `img` qualifier. */
+  & .img-about {
     width: 80%;
 
     @media (min-width: 480px) { /* was $screen-xs-min */
@@ -897,7 +947,7 @@ img.about-headshot {
     margin: auto;
     text-align: left;
   }
-  .about-inner-container img.img-about {
+  .about-inner-container .img-about {
     width: 40%;
     max-width: 400px;
     margin-left: 6%;
@@ -917,12 +967,12 @@ img.about-headshot {
 
 .section-work {
   position: relative;
-  z-index: var(--z2);
+  z-index: var(--z1);
   padding-top: 90px;
   padding-bottom: 0px;
   padding-right: 0px;
   padding-left: 0px;
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-warm);
   color: var(--color-ink);
   overflow: hidden;
 }
@@ -941,10 +991,36 @@ img.about-headshot {
   min-height: 1200px;
 }
 
+.work-lead-in {
+  position: relative;
+  z-index: var(--z2);
+  padding-top: 0px;
+  padding-right: 20%;
+  padding-left: 20%;
+  padding-bottom: 90px;
+  font-size: var(--text-base);
+  line-height: 160%;
+  text-align: center;
+  max-width: var(--max-width);
+  margin: auto;
+
+  @media (min-width: 480px) { /* was $screen-xs-min */
+    font-size: var(--text-base);
+    line-height: 140%;
+    padding-top: 20px;
+    padding-bottom: 90px;
+  }
+}
+
 .img-work {
   width: 60%;
-  padding-bottom: 90px;
+  padding-bottom: 20px;
   max-width: 400px;
+  /* `.img-responsive` carries height:auto and the global `img` rule used to
+     supply it otherwise — but this mark is an <svg> and does not use
+     .img-responsive, so it needs its own. Without it the viewBox height is
+     the used height and the mark renders at intrinsic size. */
+  height: auto;
 }
 
 @media (min-width: 480px) { /* was $screen-xs-min */
@@ -978,7 +1054,7 @@ img.about-headshot {
   z-index: var(--z4);
 }
 
-.project-return {
+.project-return { 
   height: 0;
   overflow: hidden;
 }
@@ -1394,7 +1470,7 @@ img.about-headshot {
   }
 }
 
-img.img-contact {
+.img-contact {
   padding-bottom: 30px;
   width: 100%;
   padding-left: 15%;

@@ -62,7 +62,7 @@ $(function() {
 		circles: [a.circle(x, y, 60), a.circle(x, y, 150), a.circle(x, y, 200)],
 		strokeWidths: [60, 90, 130],
 		dashes: buildDashArray(),
-		times: [115000, 105000, 95000]
+		times: [115000, 85000, 45000]
 	};
 
 	headerSvgVals.circles.forEach(function(element, index) {
