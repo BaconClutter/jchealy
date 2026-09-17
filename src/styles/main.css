@@ -36,7 +36,7 @@ Code Style: http://codeguide.co/#css
 
   /* Surfaces */
   --color-surface:        #FFFFFF;   /* default page background          */
-  --color-surface-warm:   #F2F0EC;   /* About section                    */
+  --color-surface-warm:   #DCE4E8;   /* About section                    */
   --color-surface-muted:  #F0F0F0;   /* light project-detail band        */
   --color-surface-dark:   #3A3A3A;   /* dark project-detail band         */
 
@@ -69,10 +69,10 @@ Code Style: http://codeguide.co/#css
 
   /* Decorative backdrops — the animated rings drawn by Snap.svg.
      Previously hardcoded inside custom-svg.js, invisible to CSS. */
-  --color-backdrop-1:     #0E0E0E;   /* header ring, innermost           */
-  --color-backdrop-2:     #171717;   /* header ring, middle              */
-  --color-backdrop-3:     #202020;   /* header ring, outermost           */
-  --color-backdrop-warm:  #E2DFD8;   /* About ring                       */
+  --color-backdrop-1:     #091928;   /* header ring, innermost           */
+  --color-backdrop-2:     #0c2033;   /* header ring, middle              */
+  --color-backdrop-3:     #2C211A;   /* header ring, outermost           */
+  --color-backdrop-warm:  #CFE0E6;   /* About ring                       */
 
   --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
   --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
