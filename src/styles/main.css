@@ -57,8 +57,8 @@ Code Style: http://codeguide.co/#css
   --color-text-inverse:   #fff;
 
   /* Accent */
-  --color-accent:         #B23A2F;   /* Contact section, links, headings */
-  --color-accent-deep:    #8C2C23;   /* form field backgrounds           */
+  --color-accent:         #E2265B;   /* Contact section, links, headings */
+  --color-accent-deep:    #821433;   /* form field backgrounds           */
   --color-accent-cool:    #2E2E2E;   /* the one cool project band        */
 
   /* Generic anchor colour, inherited from Bootstrap. Near-inert in
