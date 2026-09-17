@@ -71,8 +71,8 @@ Code Style: http://codeguide.co/#css
      Previously hardcoded inside custom-svg.js, invisible to CSS. */
   --color-backdrop-1:     #091928;   /* header ring, innermost           */
   --color-backdrop-2:     #0c2033;   /* header ring, middle              */
-  --color-backdrop-3:     #2C211A;   /* header ring, outermost           */
-  --color-backdrop-warm:  #CFE0E6;   /* About ring                       */
+  --color-backdrop-3:     #0d273e;   /* header ring, outermost           */
+  --color-backdrop-warm:  #b4c4c9;   /* About ring                       */
 
   --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
   --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
