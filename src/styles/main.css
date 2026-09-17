@@ -272,7 +272,7 @@ h4, h5, h6 {
 
 h1 { font-size: var(--text-2xl); }
 h2 { font-size: var(--text-xl); }
-h3 { font-size: var(--text-lg); }
+h3 { font-size: var(--text-xl); }
 h4 { font-size: var(--text-base); }
 h5 { font-size: var(--text-sm); }
 h6 { font-size: var(--text-xs); }
@@ -1504,6 +1504,7 @@ img.about-headshot {
 .contact-form-subtitle {
   padding-top: 0px;
   margin-top: 0px;
+  margin-bottom: 24px;
   font-size: var(--text-base);
   font-weight: bold;
 }
@@ -1511,7 +1512,7 @@ img.about-headshot {
 .contact-form-wrapper {
   padding: 20px;
   text-align: center;
-  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
+  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50); */
 }
 
 /* Intentionally omitted from this port, all confirmed dead:
@@ -1581,7 +1582,7 @@ img.about-headshot {
 }
 
 .feedback-input:focus {
-  background: var(--color-surface-warm);
+  background: var(--color-accent-deep);
   /* `box-shadow: 0` is invalid CSS — copied verbatim from main.scss on
      purpose. Browsers discard the declaration, so the focused input keeps
      the inset shadow inherited from .feedback-input above. "Correcting"
@@ -1589,7 +1590,7 @@ img.about-headshot {
      real visual change, not a cleanup. Leave it alone. */
   box-shadow: 0;
   border: none;
-  color: var(--color-ink);
+  color: var(--color-text-inverse);
   outline: none;
 }
 
@@ -1602,7 +1603,7 @@ textarea {
 
 input:hover, textarea:hover,
 input:focus, textarea:focus {
-  background-color: var(--color-surface-warm);
+  background-color: var(--color-accent-deep);
 }
 
 /* Placeholders were --color-accent on the deep-accent field: 1.4:1, which
@@ -1625,10 +1626,12 @@ input:focus, textarea:focus {
 #button-submit {
   width: 100%;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  background-color: var(--color-ink);
-  color: var(--color-text-inverse);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
   font-size: var(--text-base);
+  font-weight: bold;
   padding-top: 15px;
   padding-bottom: 15px;
   box-shadow: var(--shadow-button);
