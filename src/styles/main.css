@@ -72,7 +72,7 @@ Code Style: http://codeguide.co/#css
   --color-backdrop-1:     #091928;   /* header ring, innermost           */
   --color-backdrop-2:     #0c2033;   /* header ring, middle              */
   --color-backdrop-3:     #0d273e;   /* header ring, outermost           */
-  --color-backdrop-warm:  #b4c4c9;   /* About ring                       */
+  --color-backdrop-warm:  #bdcfd5;   /* About ring                       */
 
   --shadow-button: 0px 1px 1px 1px rgba(0, 0, 0, 0.20);
   --shadow-button-active: 0px 3px 3px 1px rgba(0, 0, 0, 0.20);
